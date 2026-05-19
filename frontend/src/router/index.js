@@ -1,0 +1,91 @@
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue')
+  },
+  {
+    path: '/',
+    component: () => import('@/layout/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/views/Home.vue')
+      },
+      {
+        path: 'park-overview',
+        name: 'ParkOverview',
+        component: () => import('@/views/ParkOverview.vue')
+      },
+      {
+        path: 'services',
+        name: 'ServiceList',
+        component: () => import('@/views/ServiceList.vue')
+      },
+      {
+        path: 'services/:id',
+        name: 'ServiceDetail',
+        component: () => import('@/views/ServiceDetail.vue')
+      },
+      {
+        path: 'apply/:serviceId',
+        name: 'ApplyPlaceholder',
+        component: () => import('@/views/ApplyPlaceholder.vue')
+      },
+      {
+        path: 'admin/parks',
+        name: 'ParkManage',
+        component: () => import('@/views/ParkManage.vue')
+      },
+      {
+        path: 'admin/articles',
+        name: 'ArticleManage',
+        component: () => import('@/views/ArticleManage.vue')
+      },
+      {
+        path: 'admin/banners',
+        name: 'BannerManage',
+        component: () => import('@/views/BannerManage.vue')
+      },
+      {
+        path: 'admin/services',
+        name: 'ServiceManage',
+        component: () => import('@/views/ServiceManage.vue')
+      },
+      {
+        path: 'admin/users',
+        name: 'UserManage',
+        component: () => import('@/views/UserManage.vue')
+      },
+      {
+        path: 'articles',
+        name: 'ArticleList',
+        component: () => import('@/views/ArticleList.vue')
+      },
+      {
+        path: 'articles/:id',
+        name: 'ArticleDetail',
+        component: () => import('@/views/ArticleDetail.vue')
+      }
+    ]
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.path !== '/login' && !token) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
+export default router

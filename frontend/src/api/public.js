@@ -1,0 +1,13 @@
+import request from '@/utils/request'
+
+export function getArticleList(params) {
+  return request({ url: '/articles', method: 'get', params })
+}
+
+export function getArticleDetail(id) {
+  return request({ url: `/articles/${id}`, method: 'get' })
+}
+
+export function getActiveBanners() {
+  return request({ url: '/banners', method: 'get' })
+}
