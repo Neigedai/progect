@@ -8,10 +8,10 @@
     <el-card class="search-card">
       <el-form :model="query" inline>
         <el-form-item label="标题">
-          <el-input v-model="query.title" placeholder="输入标题搜索" clearable @keyup.enter="fetchList" />
+          <el-input v-model="query.title" placeholder="输入标题搜索" clearable style="width:220px" @keyup.enter="fetchList" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" placeholder="全部" clearable>
+          <el-select v-model="query.status" placeholder="全部" clearable style="width:180px">
             <el-option :value="1" label="启用" />
             <el-option :value="0" label="禁用" />
           </el-select>
@@ -24,7 +24,7 @@
     </el-card>
 
     <el-card>
-      <el-table v-loading="loading" :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe empty-text="暂无轮播图数据">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column label="缩略图" width="120">
           <template #default="{ row }">
@@ -64,7 +64,7 @@
       />
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑轮播图' : '新增轮播图'" width="560px" destroy-on-close>
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑轮播图' : '新增轮播图'" width="600px" destroy-on-close>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" />
@@ -217,4 +217,6 @@ fetchList()
 </script>
 
 <style scoped>
+.admin-page { padding-bottom: 24px; }
+.admin-page .el-card { border-radius: var(--radius-lg); }
 </style>

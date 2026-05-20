@@ -11,3 +11,7 @@ export function getServiceItems(params) {
 export function getServiceDetail(id) {
   return request.get(`/services/items/${id}`)
 }
+
+export function getFloatingMenuItems() {
+  return request.get('/floating-menu/items')
+}

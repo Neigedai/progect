@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const bcrypt = require\\('bcryptjs'\\); console.log\\(bcrypt.hashSync\\('admin123', 10\\)\\);\")"
+      "Bash(node -e \"const bcrypt = require\\('bcryptjs'\\); console.log\\(bcrypt.hashSync\\('admin123', 10\\)\\);\")",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 31920 //F)",
+      "Bash(taskkill //PID 18648 //F)",
+      "Bash(taskkill //PID 28176 //F)",
+      "Bash(node_modules/.bin/vite --host)",
+      "WebFetch(domain:ui-ux-pro-max-skill.com)",
+      "Bash(https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 curl -sL https://api.github.com/repos/nextlevelbuilder/ui-ux-pro-max-skill)",
+      "Bash(https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 git ls-remote https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git)",
+      "Bash(https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 git clone --depth 1 https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git /tmp/ui-ux-pro-max-skill)",
+      "Bash(ls /tmp/ui-ux-pro-max-skill/)",
+      "Read(//tmp/**)"
     ]
   }
 }

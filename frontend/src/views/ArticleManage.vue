@@ -8,16 +8,19 @@
     <el-card class="search-card">
       <el-form :model="query" inline>
         <el-form-item label="标题">
-          <el-input v-model="query.title" placeholder="输入标题搜索" clearable @keyup.enter="fetchList" />
+          <el-input v-model="query.title" placeholder="输入标题搜索" clearable style="width:220px" @keyup.enter="fetchList" />
+        </el-form-item>
+        <el-form-item label="作者">
+          <el-input v-model="query.author" placeholder="输入作者搜索" clearable style="width:160px" @keyup.enter="fetchList" />
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="query.type" placeholder="全部" clearable>
+          <el-select v-model="query.type" placeholder="全部" clearable style="width:180px">
             <el-option value="news" label="园区动态" />
             <el-option value="policy" label="政策文章" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" placeholder="全部" clearable>
+          <el-select v-model="query.status" placeholder="全部" clearable style="width:180px">
             <el-option :value="1" label="已发布" />
             <el-option :value="0" label="草稿" />
           </el-select>
@@ -30,7 +33,7 @@
     </el-card>
 
     <el-card>
-      <el-table v-loading="loading" :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe empty-text="暂无文章数据">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="title" label="标题" min-width="200" show-overflow-tooltip />
         <el-table-column label="类型" width="90">
@@ -72,7 +75,7 @@
       />
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑文章' : '新增文章'" width="720px" destroy-on-close>
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑文章' : '新增文章'" width="800px" destroy-on-close>
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" />
@@ -130,7 +133,7 @@ const isEdit = ref(false)
 const formRef = ref(null)
 const editId = ref(null)
 
-const query = reactive({ page: 1, size: 10, title: '', type: '', status: null })
+const query = reactive({ page: 1, size: 10, title: '', type: '', status: null, author: '' })
 
 const form = reactive({
   title: '', type: 'news', author: '', source: '', coverImage: '',
@@ -157,6 +160,7 @@ const resetQuery = () => {
   query.title = ''
   query.type = ''
   query.status = null
+  query.author = ''
   query.page = 1
   fetchList()
 }
@@ -216,4 +220,6 @@ fetchList()
 </script>
 
 <style scoped>
+.admin-page { padding-bottom: 24px; }
+.admin-page .el-card { border-radius: var(--radius-lg); }
 </style>

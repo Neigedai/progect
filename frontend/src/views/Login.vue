@@ -93,8 +93,7 @@ const handleSendCode = async () => {
   try { await phoneFormRef.value.validateField('phone') } catch { return }
   try {
     const res = await request.post('/auth/send-code', { phone: phoneForm.phone })
-    // 开发环境直接展示验证码，生产环境需移除
-    ElMessage.success('验证码已发送（开发模式：' + res.data.code + '）')
+    ElMessage.success('验证码已发送，请查收手机短信')
     countdown.value = 60
     countdownTimer = setInterval(() => {
       countdown.value--
@@ -129,13 +128,39 @@ const handlePhoneLogin = async () => {
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  position: relative;
+  overflow: hidden;
+}
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(22, 93, 255, 0.06);
+  top: -80px;
+  right: -80px;
+}
+.login-container::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(22, 93, 255, 0.04);
+  bottom: -40px;
+  left: -40px;
 }
 .login-card {
   width: 420px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   border: none;
+  position: relative;
+  z-index: 1;
+  transition: box-shadow 0.3s;
 }
+.login-card:hover { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); }
 .login-card :deep(.el-card__header) {
   padding: 28px 28px 0;
   border-bottom: none;

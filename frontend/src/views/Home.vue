@@ -16,21 +16,28 @@
       <p class="welcome-desc">一站式园区服务管理平台，助力园区数字化转型</p>
 
       <el-row :gutter="20" class="quick-links">
-        <el-col :md="8" :sm="12" :xs="24">
+        <el-col :md="6" :sm="12" :xs="24">
           <el-card shadow="hover" class="quick-card" @click="$router.push('/park-overview')">
             <div class="card-icon" style="background:#E8F3FF"><el-icon :size="28" color="#165DFF"><OfficeBuilding /></el-icon></div>
             <h3>园区概况</h3>
             <p>查看园区基础信息、配套设施及荣誉资质</p>
           </el-card>
         </el-col>
-        <el-col :md="8" :sm="12" :xs="24">
+        <el-col :md="6" :sm="12" :xs="24">
           <el-card shadow="hover" class="quick-card" @click="$router.push('/services')">
             <div class="card-icon" style="background:#E8FFEA"><el-icon :size="28" color="#00B42A"><Grid /></el-icon></div>
             <h3>企业服务大厅</h3>
             <p>浏览政策申报、财税代办等企业服务</p>
           </el-card>
         </el-col>
-        <el-col :md="8" :sm="12" :xs="24">
+        <el-col :md="6" :sm="12" :xs="24">
+          <el-card shadow="hover" class="quick-card" @click="$router.push('/apply/residency')">
+            <div class="card-icon" style="background:#EDEEFF"><el-icon :size="28" color="#6C6FF5"><EditPen /></el-icon></div>
+            <h3>在线入驻申请</h3>
+            <p>提交企业入驻意向，快速获取园区审批反馈</p>
+          </el-card>
+        </el-col>
+        <el-col :md="6" :sm="12" :xs="24">
           <el-card shadow="hover" class="quick-card" @click="$router.push('/articles')">
             <div class="card-icon" style="background:#FFF7E8"><el-icon :size="28" color="#FF7D00"><Document /></el-icon></div>
             <h3>资讯与政策</h3>
@@ -45,7 +52,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getActiveBanners } from '@/api/public'
-import { OfficeBuilding, Grid, Document } from '@element-plus/icons-vue'
+import { OfficeBuilding, Grid, EditPen, Document } from '@element-plus/icons-vue'
 
 const banners = ref([])
 

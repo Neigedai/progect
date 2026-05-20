@@ -1,16 +1,21 @@
 <template>
-  <span style="margin-left:8px">
+  <span class="upload-btn">
     <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="handleFile" />
-    <el-button size="small" @click="fileInput.click()">上传</el-button>
+    <el-button size="small" :icon="Upload" @click="fileInput.click()">{{ text || '上传' }}</el-button>
   </span>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Upload } from '@element-plus/icons-vue'
 import { uploadImage } from '@/api/admin'
 
-const emit = defineEmits(['uploaded'])
+const props = defineProps({
+  modelValue: { type: String, default: '' },
+  text: { type: String, default: '' }
+})
+const emit = defineEmits(['update:modelValue', 'uploaded'])
 
 const fileInput = ref(null)
 
@@ -29,11 +34,16 @@ const handleFile = async (e) => {
   }
   try {
     const res = await uploadImage(file)
+    emit('update:modelValue', res.data.url)
     emit('uploaded', res.data.url)
     ElMessage.success('上传成功')
   } catch {
-    // error handled by interceptor
+    ElMessage.error('上传失败')
   }
   fileInput.value.value = ''
 }
 </script>
+
+<style scoped>
+.upload-btn { display: inline-flex; align-items: center; margin-left: 8px; }
+</style>

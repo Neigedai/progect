@@ -12,8 +12,7 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Home',
-        component: () => import('@/views/Home.vue')
+        redirect: '/park-overview'
       },
       {
         path: 'park-overview',
@@ -36,6 +35,16 @@ const routes = [
         component: () => import('@/views/ApplyPlaceholder.vue')
       },
       {
+        path: 'apply/residency',
+        name: 'ResidencyApply',
+        component: () => import('@/views/ResidencyApply.vue')
+      },
+      {
+        path: 'enterprise-auth',
+        name: 'EnterpriseAuth',
+        component: () => import('@/views/EnterpriseAuth.vue')
+      },
+      {
         path: 'admin/parks',
         name: 'ParkManage',
         component: () => import('@/views/ParkManage.vue')
@@ -54,6 +63,31 @@ const routes = [
         path: 'admin/services',
         name: 'ServiceManage',
         component: () => import('@/views/ServiceManage.vue')
+      },
+      {
+        path: 'admin/floating-menu',
+        name: 'FloatingMenuManage',
+        component: () => import('@/views/FloatingMenuManage.vue')
+      },
+      {
+        path: 'admin/residency',
+        name: 'ResidencyManage',
+        component: () => import('@/views/ResidencyManage.vue')
+      },
+      {
+        path: 'admin/roles',
+        name: 'RoleManage',
+        component: () => import('@/views/RoleManage.vue')
+      },
+      {
+        path: 'admin/enterprise',
+        name: 'EnterpriseAuthManage',
+        component: () => import('@/views/EnterpriseAuthManage.vue')
+      },
+      {
+        path: 'admin/notifications',
+        name: 'NotificationManage',
+        component: () => import('@/views/NotificationManage.vue')
       },
       {
         path: 'admin/users',

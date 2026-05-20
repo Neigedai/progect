@@ -60,7 +60,7 @@ defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e8eaed;
+  background: var(--border-light);
   border-radius: var(--radius);
   color: var(--text-placeholder);
   margin-bottom: 12px;

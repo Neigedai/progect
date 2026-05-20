@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list">
+  <div class="article-list" v-loading="loading">
     <h2 class="page-title">资讯与政策</h2>
 
     <div class="filter-bar">
@@ -17,7 +17,7 @@
         <el-image v-if="a.coverImage" :src="a.coverImage" class="cover" fit="cover" />
         <div class="article-info">
           <h3 class="article-title">
-            <el-tag :type="a.type === 'policy' ? 'warning' : ''" size="small" class="type-tag">
+            <el-tag :type="a.type === 'policy' ? 'warning' : 'info'" size="small" class="type-tag">
               {{ a.type === 'policy' ? '政策' : '动态' }}
             </el-tag>
             {{ a.title }}

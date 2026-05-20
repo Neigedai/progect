@@ -8,10 +8,10 @@
     <el-card class="search-card">
       <el-form :model="query" inline>
         <el-form-item label="搜索">
-          <el-input v-model="query.keyword" placeholder="用户名/手机号/昵称" clearable @keyup.enter="fetchList" />
+          <el-input v-model="query.keyword" placeholder="用户名/手机号/昵称" clearable style="width:220px" @keyup.enter="fetchList" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" placeholder="全部" clearable>
+          <el-select v-model="query.status" placeholder="全部" clearable style="width:180px">
             <el-option :value="1" label="启用" />
             <el-option :value="0" label="禁用" />
           </el-select>
@@ -24,7 +24,7 @@
     </el-card>
 
     <el-card>
-      <el-table v-loading="loading" :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe empty-text="暂无用户数据">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="username" label="用户名" width="120" />
         <el-table-column prop="nickname" label="昵称" width="120" />
@@ -87,7 +87,7 @@
     </el-dialog>
 
     <!-- 改密弹窗 -->
-    <el-dialog v-model="pwdDialogVisible" title="重置密码" width="400px" destroy-on-close>
+    <el-dialog v-model="pwdDialogVisible" title="重置密码" width="480px" destroy-on-close>
       <el-form ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="80px">
         <el-form-item label="新密码" prop="password">
           <el-input v-model="pwdForm.password" show-password />
@@ -207,4 +207,6 @@ fetchList()
 </script>
 
 <style scoped>
+.admin-page { padding-bottom: 24px; }
+.admin-page .el-card { border-radius: var(--radius-lg); }
 </style>

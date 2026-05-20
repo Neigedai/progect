@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="service-detail" v-loading="loading">
     <!-- 面包屑 -->
     <el-breadcrumb separator="/" class="breadcrumb">
@@ -58,9 +59,17 @@
 
       <!-- 底部立即办理按钮 -->
       <div class="action-bar">
-        <el-button type="primary" size="large" @click="goApply">立即办理</el-button>
+        <el-button type="primary" size="large" @click="showApplyDialog">立即办理</el-button>
       </div>
     </template>
+  </div>
+
+  <el-dialog v-model="applyDialogVisible" title="立即办理" width="360px" align-center>
+    <div style="text-align:center">
+      <img v-if="applyQrUrl" :src="applyQrUrl" alt="办理二维码" style="max-width:260px;border-radius:8px" />
+      <p v-else style="color:#999">暂无办理入口</p>
+    </div>
+  </el-dialog>
   </div>
 </template>
 
@@ -68,12 +77,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getServiceDetail } from '@/api/service'
+import { getFloatingMenuItems } from '@/api/service'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
 const detail = ref(null)
+const applyDialogVisible = ref(false)
+const applyQrUrl = ref('')
 
 const fetchDetail = async () => {
   const id = route.params.id
@@ -90,8 +102,21 @@ const fetchDetail = async () => {
   }
 }
 
-const goApply = () => {
-  router.push(`/apply/${route.params.id}`)
+const showApplyDialog = async () => {
+  try {
+    const res = await getFloatingMenuItems()
+    const items = res.data || []
+    const applyItem = items.find(i => i.title === '立即办理')
+    if (applyItem?.imageUrl) {
+      applyQrUrl.value = applyItem.imageUrl
+    } else {
+      applyQrUrl.value = ''
+    }
+    applyDialogVisible.value = true
+  } catch {
+    applyQrUrl.value = ''
+    applyDialogVisible.value = true
+  }
 }
 
 onMounted(fetchDetail)

@@ -92,6 +92,31 @@ export function getHonors(parkId) {
   return request({ url: `/admin/parks/${parkId}/honors`, method: 'get' })
 }
 
+// 悬浮菜单管理
+export function getFloatingMenuItems() {
+  return request({ url: '/floating-menu/admin/items', method: 'get' })
+}
+
+export function getFloatingMenuItem(id) {
+  return request({ url: `/floating-menu/admin/items/${id}`, method: 'get' })
+}
+
+export function createFloatingMenuItem(data) {
+  return request({ url: '/floating-menu/admin/items', method: 'post', data })
+}
+
+export function updateFloatingMenuItem(id, data) {
+  return request({ url: `/floating-menu/admin/items/${id}`, method: 'put', data })
+}
+
+export function deleteFloatingMenuItem(id) {
+  return request({ url: `/floating-menu/admin/items/${id}`, method: 'delete' })
+}
+
+export function updateFloatingMenuItemStatus(id, status) {
+  return request({ url: `/floating-menu/admin/items/${id}/status`, method: 'patch', data: { status } })
+}
+
 export function createHonor(parkId, data) {
   return request({ url: `/admin/parks/${parkId}/honors`, method: 'post', data })
 }

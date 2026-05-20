@@ -75,7 +75,7 @@ fetchParks()
 }
 .label {
   font-size: 14px;
-  color: #606266;
+  color: var(--text-regular);
   white-space: nowrap;
 }
 </style>

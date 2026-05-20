@@ -27,7 +27,7 @@ public class FileServiceImpl implements FileService {
         }
 
         String ext = getExtension(originalFilename);
-        if (!ext.matches("(jpg|jpeg|png|gif|webp|bmp)")) {
+        if (!ext.matches("(jpg|jpeg|png|gif|webp|bmp|svg)")) {
             throw new IllegalArgumentException("不支持的文件类型: " + ext);
         }
 

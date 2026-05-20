@@ -28,8 +28,9 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/health", "/api/parks/**", "/api/services/**",
-                        "/api/articles/**", "/api/banners/**", "/uploads/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/send-code",
+                        "/api/auth/phone-login", "/api/health", "/api/parks/**", "/api/services/**",
+                        "/api/articles/**", "/api/banners/**", "/api/floating-menu/items", "/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

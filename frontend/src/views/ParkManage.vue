@@ -8,10 +8,10 @@
     <el-card class="search-card">
       <el-form :model="query" inline>
         <el-form-item label="园区名称">
-          <el-input v-model="query.parkName" placeholder="输入名称搜索" clearable @keyup.enter="fetchList" />
+          <el-input v-model="query.parkName" placeholder="输入名称搜索" clearable style="width:220px" @keyup.enter="fetchList" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" placeholder="全部" clearable>
+          <el-select v-model="query.status" placeholder="全部" clearable style="width:180px">
             <el-option :value="1" label="启用" />
             <el-option :value="0" label="禁用" />
           </el-select>
@@ -24,7 +24,7 @@
     </el-card>
 
     <el-card>
-      <el-table v-loading="loading" :data="tableData" stripe>
+      <el-table v-loading="loading" :data="tableData" stripe empty-text="暂无园区数据">
         <el-table-column prop="id" label="ID" width="60" />
         <el-table-column prop="parkName" label="园区名称" min-width="140" />
         <el-table-column prop="sortOrder" label="排序" width="70" />
@@ -152,7 +152,7 @@
     </el-dialog>
 
     <!-- 设施编辑弹窗 -->
-    <el-dialog v-model="facilityDialogVisible" :title="facilityEditId ? '编辑设施' : '新增设施'" width="500px" destroy-on-close>
+    <el-dialog v-model="facilityDialogVisible" :title="facilityEditId ? '编辑设施' : '新增设施'" width="480px" destroy-on-close>
       <el-form ref="facilityFormRef" :model="facilityForm" :rules="facilityRules" label-width="80px">
         <el-form-item label="名称" prop="facilityName">
           <el-input v-model="facilityForm.facilityName" />
@@ -178,7 +178,7 @@
     </el-dialog>
 
     <!-- 荣誉编辑弹窗 -->
-    <el-dialog v-model="honorDialogVisible" :title="honorEditId ? '编辑荣誉' : '新增荣誉'" width="500px" destroy-on-close>
+    <el-dialog v-model="honorDialogVisible" :title="honorEditId ? '编辑荣誉' : '新增荣誉'" width="480px" destroy-on-close>
       <el-form ref="honorFormRef" :model="honorForm" :rules="honorRules" label-width="80px">
         <el-form-item label="荣誉名称" prop="honorName">
           <el-input v-model="honorForm.honorName" />
@@ -385,4 +385,6 @@ fetchList()
 </script>
 
 <style scoped>
+.admin-page { padding-bottom: 24px; }
+.admin-page .el-card { border-radius: var(--radius-lg); }
 </style>

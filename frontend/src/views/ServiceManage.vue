@@ -34,10 +34,14 @@
       <el-tab-pane label="服务项目" name="items">
         <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center">
           <el-button type="primary" size="small" @click="openItemDialog()">新增服务</el-button>
-          <el-select v-model="itemQuery.categoryId" placeholder="分类筛选" clearable size="small" style="width:140px" @change="fetchItems">
+          <el-select v-model="itemQuery.categoryId" placeholder="分类筛选" clearable size="small" style="width:180px" @change="fetchItems">
             <el-option v-for="c in categoryList" :key="c.id" :value="c.id" :label="c.categoryName" />
           </el-select>
-          <el-input v-model="itemQuery.keyword" placeholder="搜索服务名称" clearable size="small" style="width:200px" @keyup.enter="fetchItems" />
+          <el-select v-model="itemQuery.status" placeholder="状态" clearable size="small" style="width:140px" @change="fetchItems">
+            <el-option :value="1" label="上架" />
+            <el-option :value="0" label="下架" />
+          </el-select>
+          <el-input v-model="itemQuery.keyword" placeholder="搜索服务名称" clearable size="small" style="width:220px" @keyup.enter="fetchItems" />
           <el-button size="small" @click="fetchItems">搜索</el-button>
         </div>
         <el-card>
@@ -81,7 +85,7 @@
     </el-tabs>
 
     <!-- 分类弹窗 -->
-    <el-dialog v-model="catDialogVisible" :title="catEditId ? '编辑分类' : '新增分类'" width="420px" destroy-on-close>
+    <el-dialog v-model="catDialogVisible" :title="catEditId ? '编辑分类' : '新增分类'" width="480px" destroy-on-close>
       <el-form ref="catFormRef" :model="catForm" :rules="catRules" label-width="80px">
         <el-form-item label="名称" prop="categoryName">
           <el-input v-model="catForm.categoryName" />
@@ -100,7 +104,7 @@
     </el-dialog>
 
     <!-- 服务项目弹窗 -->
-    <el-dialog v-model="itemDialogVisible" :title="itemEditId ? '编辑服务' : '新增服务'" width="720px" destroy-on-close>
+    <el-dialog v-model="itemDialogVisible" :title="itemEditId ? '编辑服务' : '新增服务'" width="800px" destroy-on-close>
       <el-form ref="itemFormRef" :model="itemForm" :rules="itemRules" label-width="100px">
         <el-form-item label="服务名称" prop="serviceName">
           <el-input v-model="itemForm.serviceName" />
@@ -217,7 +221,7 @@ const itemTotal = ref(0)
 const itemDialogVisible = ref(false)
 const itemEditId = ref(null)
 const itemFormRef = ref(null)
-const itemQuery = reactive({ page: 1, size: 10, categoryId: null, keyword: '' })
+const itemQuery = reactive({ page: 1, size: 10, categoryId: null, keyword: '', status: null })
 
 const itemForm = reactive({
   serviceName: '', categoryId: null, applicableEnterprise: '', summary: '', detailDesc: '',
@@ -311,4 +315,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.admin-page { padding-bottom: 24px; }
+.admin-page .el-card { border-radius: var(--radius-lg); }
 </style>

@@ -300,3 +300,205 @@
 - 前端：`http://localhost:3000`（Vite 5.x）
 - 数据库：MySQL 8.0 @ localhost:3306，库名 `park_service`
 - 测试账号：admin / admin123
+
+---
+
+## 模块十：RBAC 权限系统
+
+### 数据库
+- 创建 `sys_permission` 表（id, permission_name, permission_code, permission_type, parent_id, path, sort_order, create_time, update_time, is_deleted）
+- 创建 `sys_role_permission` 表（id, role_id, permission_id）
+- 插入 4 角色：super_admin / admin / reviewer / user
+- 插入 47 条权限数据（14 菜单 + 33 按钮/API 权限）
+- 分配角色权限映射 92 条
+- admin 用户分配 super_admin 角色
+- 文件：[db/rbac.sql](backend/src/main/resources/db/rbac.sql)
+
+### 后端
+- 新增 Entity：[Permission.java](backend/src/main/java/com/park/entity/Permission.java)、[RolePermission.java](backend/src/main/java/com/park/entity/RolePermission.java)
+- 新增 Mapper：[PermissionMapper.java](backend/src/main/java/com/park/mapper/PermissionMapper.java)、[RolePermissionMapper.java](backend/src/main/java/com/park/mapper/RolePermissionMapper.java)
+- 新增 Service：[AuthService.java](backend/src/main/java/com/park/service/AuthService.java) + [AuthServiceImpl.java](backend/src/main/java/com/park/service/impl/AuthServiceImpl.java)
+  - `getUserPermissionCodes(userId)` — 获取用户所有权限编码
+  - `getUserRoles(userId)` — 获取用户所有角色
+  - `assignRolePermissions(roleId, permIds)` — 角色分配权限
+  - `assignUserRole(userId, roleId)` — 用户分配角色
+  - `hasPermission(userId, permCode)` — 权限校验
+- 新增注解：[RequirePermission.java](backend/src/main/java/com/park/annotation/RequirePermission.java)（`@RequirePermission("code")`）
+- 新增 AOP：[PermissionAspect.java](backend/src/main/java/com/park/security/PermissionAspect.java)（拦截 @RequirePermission，从 SecurityContext 获取用户并校验权限，无权限返回 403）
+- 新增 Controller：[PermissionController.java](backend/src/main/java/com/park/controller/PermissionController.java)
+  - `GET/POST/PUT/DELETE /api/admin/perm/roles` — 角色 CRUD
+  - `GET/PUT /api/admin/perm/roles/{id}/permissions` — 角色权限查询/分配
+  - `GET /api/admin/perm/permissions` — 权限树列表
+  - `GET/POST/DELETE /api/admin/perm/users/{userId}/roles` — 用户角色分配
+- 修改 [AuthController.java](backend/src/main/java/com/park/controller/AuthController.java)：新增 `GET /api/auth/me`（返回 user + roles + permissions）
+- 修改 [SecurityConfig.java](backend/src/main/java/com/park/config/SecurityConfig.java)：`/api/auth/me` 改为需认证访问
+- 修改 [pom.xml](backend/pom.xml)：新增 `spring-boot-starter-aop` 依赖
+- 添加 @RequirePermission 注解至以下控制器：
+  - [AdminUserController.java](backend/src/main/java/com/park/controller/AdminUserController.java)（user:view/add/edit/delete/status）
+  - [ResidencyApplicationController.java](backend/src/main/java/com/park/controller/ResidencyApplicationController.java)（residency:view/approve/edit）
+  - [FloatingMenuController.java](backend/src/main/java/com/park/controller/FloatingMenuController.java)（floating:view/add/edit/delete）
+
+### 前端
+- 新增 [src/utils/auth.js](frontend/src/utils/auth.js)：useAuth() 组合式函数（loadAuth/clearAuth/hasPermission/hasRole/state）
+- 新增 [src/directives/permission.js](frontend/src/directives/permission.js)：`v-permission` 指令（无权限隐藏元素）
+- 修改 [src/main.js](frontend/src/main.js)：注册 v-permission 全局指令
+- 修改 [MainLayout.vue](frontend/src/layout/MainLayout.vue)：
+  - 登录后调用 /api/auth/me 加载权限
+  - 内容管理子菜单按权限动态显示
+  - 无任何后台权限的用户不显示"内容管理"菜单
+  - 显示当前登录用户名
+- 新增页面：[RoleManage.vue](frontend/src/views/RoleManage.vue)（角色管理：CRUD + 权限树分配）
+- 新增路由：`/admin/roles`
+
+---
+
+## 模块八：企业服务大厅悬浮菜单
+
+### 需求
+- 企业服务大厅页面右侧固定悬浮菜单
+- 鼠标移入按钮时左侧弹出对应图片
+- 弹出图片后台可配置
+
+### 数据库
+- 创建 `floating_menu_item` 表（id, title, image_url, sort_order, status, create_time, update_time, is_deleted）
+- 插入 4 条示例数据
+- 文件：[db/floating_menu.sql](backend/src/main/resources/db/floating_menu.sql)
+
+### 后端
+- 新增 Entity：[FloatingMenuItem.java](backend/src/main/java/com/park/entity/FloatingMenuItem.java)
+- 新增 Mapper：[FloatingMenuItemMapper.java](backend/src/main/java/com/park/mapper/FloatingMenuItemMapper.java)
+- 新增 Service：[FloatingMenuService.java](backend/src/main/java/com/park/service/FloatingMenuService.java) + [FloatingMenuServiceImpl.java](backend/src/main/java/com/park/service/impl/FloatingMenuServiceImpl.java)
+- 新增 Controller：[FloatingMenuController.java](backend/src/main/java/com/park/controller/FloatingMenuController.java)
+  - `GET /api/floating-menu/items` — 公开接口，获取启用的菜单项（按 sort_order 排序）
+  - `GET /api/floating-menu/admin/items` — 管理端列表
+  - `GET /api/floating-menu/admin/items/{id}` — 管理端详情
+  - `POST /api/floating-menu/admin/items` — 新增菜单项
+  - `PUT /api/floating-menu/admin/items/{id}` — 编辑菜单项
+  - `DELETE /api/floating-menu/admin/items/{id}` — 删除菜单项
+- 修改 [SecurityConfig.java](backend/src/main/java/com/park/config/SecurityConfig.java)：添加 `/api/floating-menu/items` 白名单
+
+### 前端
+- 修改 [src/api/service.js](frontend/src/api/service.js)：新增 `getFloatingMenuItems()` 方法
+- 新增组件：[FloatingMenu.vue](frontend/src/components/FloatingMenu.vue)（右侧固定悬浮，竖向按钮，hover 左侧弹出图片，768px 响应式缩放）
+- 修改 [ServiceList.vue](frontend/src/views/ServiceList.vue)：集成 FloatingMenu 组件
+
+### 后台配置方式
+1. 通过 Admin API 管理菜单项（`/api/floating-menu/admin/items`）
+2. 每个菜单项可配置：标题（title）、图片URL（image_url）、排序（sort_order）、启用状态（status）
+3. 图片URL 可使用上传接口 `/api/admin/upload/image` 上传后获得的路径
+
+### 后续更新（2026-05-19）
+- 新增 PATCH 端点 `PATCH /api/floating-menu/admin/items/{id}/status` — 切换启用状态
+- 修改 [FloatingMenu.vue](frontend/src/components/FloatingMenu.vue)：优化样式，竖向文字+图标布局，弹出图片带三角箭头，淡入过渡动画
+- 新增管理页面：[FloatingMenuManage.vue](frontend/src/views/FloatingMenuManage.vue)（表格+图片预览+新增/编辑/删除+状态开关+上传集成）
+- 新增管理 API：[src/api/admin.js](frontend/src/api/admin.js) 新增 `updateFloatingMenuItemStatus`
+- 新增路由：`/admin/floating-menu` → FloatingMenuManage.vue
+- 修改 [MainLayout.vue](frontend/src/layout/MainLayout.vue)：内容管理子菜单新增"悬浮菜单"
+
+### 样式与图标更新（2026-05-19）
+- 数据库 `floating_menu_item` 表新增 `icon` 字段（VARCHAR 100），Element Plus 图标名
+- 修改 [FloatingMenuItem.java](backend/src/main/java/com/park/entity/FloatingMenuItem.java)：新增 `icon` 属性
+- 修改 [floating_menu.sql](backend/src/main/resources/db/floating_menu.sql)：DDL 和示例数据新增 icon 字段
+- 修改 [FloatingMenu.vue](frontend/src/components/FloatingMenu.vue)：
+  - 未选中：白色背景 + #151515 文字/图标
+  - 选中(hover)：#2568f1 背景 + #fff 文字/图标，向左突出 6px 并放大
+  - 弹窗图片最大宽高限制 140px
+  - 圆角边框 + 阴影，平滑过渡动画
+- 修改 [FloatingMenuManage.vue](frontend/src/views/FloatingMenuManage.vue)：表格增加图标列，表单增加图标输入
+
+### 图标改为图片上传（2026-05-19）
+- 修改 [FloatingMenu.vue](frontend/src/components/FloatingMenu.vue)：icon 改为 `<img>` 渲染图片/SVG，有 icon 显示图片否则显示默认图标
+- 修改 [FloatingMenuManage.vue](frontend/src/views/FloatingMenuManage.vue)：图标列表列显示缩略图预览，表单改用 UploadBtn 上传
+
+---
+
+## 模块九：入驻申请与审批
+
+### 数据库
+- 创建 `residency_application` 表（id, user_id, contact_name, contact_phone, area, industry_type, expected_entry_date, additional_info, status, reviewed_by, review_comment, create_time, update_time, is_deleted）
+- 文件：[db/residency_application.sql](backend/src/main/resources/db/residency_application.sql)
+
+### 后端
+- 新增 Entity：[ResidencyApplication.java](backend/src/main/java/com/park/entity/ResidencyApplication.java)
+- 新增 Mapper：[ResidencyApplicationMapper.java](backend/src/main/java/com/park/mapper/ResidencyApplicationMapper.java)
+- 新增 Service：[ResidencyApplicationService.java](backend/src/main/java/com/park/service/ResidencyApplicationService.java) + [ResidencyApplicationServiceImpl.java](backend/src/main/java/com/park/service/impl/ResidencyApplicationServiceImpl.java)
+- 新增 Controller：[ResidencyApplicationController.java](backend/src/main/java/com/park/controller/ResidencyApplicationController.java)
+  - `POST /api/residency/applications` — 用户提交入驻申请（需认证）
+  - `GET /api/residency/applications/my` — 用户查看自己的申请
+  - `GET /api/admin/residency/applications` — 管理员分页列表（支持 status 筛选）
+  - `GET /api/admin/residency/applications/{id}` — 管理员查看详情
+  - `PUT /api/admin/residency/applications/{id}` — 管理员编辑
+  - `PATCH /api/admin/residency/applications/{id}/approve` — 审批（通过/拒绝，含审批意见）
+
+### 前端
+- 新增 API 层：[src/api/residency.js](frontend/src/api/residency.js)
+- 新增页面：[ResidencyApply.vue](frontend/src/views/ResidencyApply.vue)（入驻申请表：联系人、电话、面积、行业、预计时间、补充信息，手机号校验，提交成功跳转首页）
+- 新增管理页：[ResidencyManage.vue](frontend/src/views/ResidencyManage.vue)（状态筛选+表格+详情弹窗+通过/拒绝审批+审批意见输入）
+- 修改 [Home.vue](frontend/src/views/Home.vue)：首页新增"在线入驻申请"快捷入口卡片
+- 新增路由：`/apply/residency`、`/admin/residency`
+- 修改 [MainLayout.vue](frontend/src/layout/MainLayout.vue)：内容管理子菜单新增"入驻审批"
+
+---
+
+## 模块十一：企业认证
+
+### 数据库
+- 创建 `enterprise_auth` 表（id, user_id, company_name, credit_code, license_url, legal_person_id_url, legal_face_verified, auth_status, review_comment, reviewed_by, auth_submitted_at, auth_reviewed_at, create_time, update_time, is_deleted）
+- 唯一索引：`uk_enterprise_auth_user`（user_id）、`uk_enterprise_auth_credit_code`（credit_code）
+- 普通索引：`idx_enterprise_auth_status`（auth_status）
+- 文件：[db/enterprise_auth.sql](backend/src/main/resources/db/enterprise_auth.sql)
+- 新增 RBAC 权限：`admin:enterprise`（菜单）、`enterprise:view`（查看）、`enterprise:approve`（审批）
+- 超级管理员和管理员角色分配企业认证权限
+
+### 后端
+- 新增 Entity：[EnterpriseAuth.java](backend/src/main/java/com/park/entity/EnterpriseAuth.java)
+- 新增 Mapper：[EnterpriseAuthMapper.java](backend/src/main/java/com/park/mapper/EnterpriseAuthMapper.java)
+- 新增 Service：[EnterpriseAuthService.java](backend/src/main/java/com/park/service/EnterpriseAuthService.java) + [EnterpriseAuthServiceImpl.java](backend/src/main/java/com/park/service/impl/EnterpriseAuthServiceImpl.java)
+- 新增 Controller：[EnterpriseAuthController.java](backend/src/main/java/com/park/controller/EnterpriseAuthController.java)
+  - `POST /api/enterprise/submit` — 提交企业认证（需认证）
+  - `GET /api/enterprise/status` — 查询当前用户认证状态（需认证）
+  - `GET /api/admin/enterprise` — 管理员分页列表（支持 status 筛选，需 enterprise:view 权限）
+  - `GET /api/admin/enterprise/{id}` — 管理员查看详情（需 enterprise:view 权限）
+  - `PATCH /api/admin/enterprise/{id}/review` — 审核认证（需 enterprise:approve 权限）
+- 修改 [rbac.sql](backend/src/main/resources/db/rbac.sql)：新增企业认证权限数据
+
+### 前端
+- 新增 API 层：[src/api/enterprise.js](frontend/src/api/enterprise.js)
+- 新增页面：[EnterpriseAuth.vue](frontend/src/views/EnterpriseAuth.vue)（四步表单：基本信息→资质上传→法人验证→确认提交，实时显示认证状态）
+  - 基本信息校验：企业名称必填、信用代码18位格式校验
+  - 资质上传：营业执照扫描件（复用 UploadBtn 组件）
+  - 法人验证：上传法人身份证 + 人脸识别模拟验证
+  - 状态展示：审核中/已通过/已驳回（含驳回原因和重新提交）
+- 新增管理页：[EnterpriseAuthManage.vue](frontend/src/views/EnterpriseAuthManage.vue)（状态筛选+表格+图片预览+详情弹窗+通过/驳回审批）
+- 新增路由：`/enterprise-auth`、`/admin/enterprise`
+- 修改 [MainLayout.vue](frontend/src/layout/MainLayout.vue)：导航栏新增"企业认证"，内容管理新增"企业认证审核"
+
+---
+
+## 模块十二：系统消息通知（3.7）
+
+> 日期：2026-05-20
+
+### 数据库
+- [notification.sql](backend/src/main/resources/db/notification.sql)：新建 `notification` 表（id, user_id, type, title, content, is_read, sender_id, create_time, update_time, is_deleted），新增权限 `notification:view/add/delete`
+
+### 后端
+- 新增实体：[Notification.java](backend/src/main/java/com/park/entity/Notification.java)
+- 新增 Mapper：[NotificationMapper.java](backend/src/main/java/com/park/mapper/NotificationMapper.java)
+- 新增服务接口：[NotificationService.java](backend/src/main/java/com/park/service/NotificationService.java)
+- 新增服务实现：[NotificationServiceImpl.java](backend/src/main/java/com/park/service/impl/NotificationServiceImpl.java)
+  - `sendToUser` 给指定用户发通知，`sendToAll` 全员广播（查询所有活跃用户逐个插入）
+  - `markRead` 标记单条已读，`markAllRead` 全部已读
+  - `getUnreadCount` 未读计数，`listByUser` 分页列表
+- 新增控制器：[NotificationController.java](backend/src/main/java/com/park/controller/NotificationController.java)
+  - 前台接口：`GET /api/notifications`（我的消息列表）、`GET /api/notifications/unread-count`（未读数）、`PUT /api/notifications/read/{id}`（标记已读）、`PUT /api/notifications/read-all`（全部已读）
+  - 管理接口：`POST /api/admin/notifications`（发布公告，`@RequirePermission("notification:add")`）、`GET /api/admin/notifications`（管理列表）、`DELETE /api/admin/notifications/{id}`（删除）
+- 修改 [EnterpriseAuthController.java](backend/src/main/java/com/park/controller/EnterpriseAuthController.java)：审核通过/驳回后调用 `notificationService.sendToUser` 通知申请人
+- 修改 [ResidencyApplicationController.java](backend/src/main/java/com/park/controller/ResidencyApplicationController.java)：审批后发送业务通知
+
+### 前端
+- 新增 API 层：[notification.js](frontend/src/api/notification.js)
+- 新增组件：[NotificationBell.vue](frontend/src/components/NotificationBell.vue)（铃铛图标 + 未读角标 + 弹窗消息列表，30秒轮询未读数，Tab 切换业务通知/系统公告，点击自动标记已读）
+- 新增管理页：[NotificationManage.vue](frontend/src/views/NotificationManage.vue)（发布系统公告/业务通知，支持全员发送或指定用户，搜索筛选，删除）
+- 新增路由：`/admin/notifications`
+- 修改 [MainLayout.vue](frontend/src/layout/MainLayout.vue)：导航栏右侧插入 NotificationBell 组件，内容管理新增"消息管理"菜单项
