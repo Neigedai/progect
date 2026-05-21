@@ -1,0 +1,46 @@
+<view class="apply-page">
+  <view class="form-card">
+    <text class="form-title">入驻申请</text>
+    <text class="form-desc">填写以下信息，园区管理员将尽快与您联系</text>
+
+    <view class="form-group">
+      <text class="label">联系人 <text class="required">*</text></text>
+      <input value="{{form.contactName}}" placeholder="请输入联系人姓名" data-field="contactName" bindinput="onInput"/>
+    </view>
+
+    <view class="form-group">
+      <text class="label">联系电话 <text class="required">*</text></text>
+      <input value="{{form.contactPhone}}" type="number" maxlength="11" placeholder="请输入手机号" data-field="contactPhone" bindinput="onInput"/>
+    </view>
+
+    <view class="form-group">
+      <text class="label">面积需求 <text class="required">*</text></text>
+      <input value="{{form.area}}" placeholder="如：200-500㎡" data-field="area" bindinput="onInput"/>
+    </view>
+
+    <view class="form-group">
+      <text class="label">行业类型 <text class="required">*</text></text>
+      <picker mode="selector" range="{{industries}}" value="{{industryIdx}}" bindchange="onIndustryChange">
+        <view class="picker-val {{form.industryType ? '' : 'placeholder'}}">
+          {{form.industryType || '请选择行业类型'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="label">预计入驻时间</text>
+      <picker mode="date" bindchange="onDateChange">
+        <view class="picker-val {{form.expectedEntryDate ? '' : 'placeholder'}}">
+          {{form.expectedEntryDate || '请选择日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="label">补充说明</text>
+      <textarea value="{{form.additionalInfo}}" placeholder="请输入其他需求或说明（选填）" data-field="additionalInfo" bindinput="onInput"/>
+    </view>
+
+    <view class="submit-btn" bindtap="handleSubmit">提交申请</view>
+  </view>
+</view>

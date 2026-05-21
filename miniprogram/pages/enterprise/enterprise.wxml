@@ -1,0 +1,114 @@
+<view class="enterprise-page">
+  <!-- 已认证 -->
+  <view wx:if="{{authStatus && authStatus.authStatus === 'approved'}}" class="status-card approved">
+    <image src="/images/icons/status-approved.png" class="status-icon" mode="aspectFit"/>
+    <text class="status-title">企业认证已通过</text>
+    <text class="status-company">{{authStatus.companyName}}</text>
+  </view>
+
+  <!-- 待审核 -->
+  <view wx:elif="{{authStatus && authStatus.authStatus === 'pending'}}" class="status-card pending">
+    <image src="/images/icons/status-pending.png" class="status-icon" mode="aspectFit"/>
+    <text class="status-title">认证审核中</text>
+    <text class="status-company">{{authStatus.companyName}}</text>
+    <text class="status-time">提交时间：{{authStatus.authSubmittedAt}}</text>
+  </view>
+
+  <!-- 已驳回 -->
+  <view wx:elif="{{authStatus && authStatus.authStatus === 'rejected'}}" class="status-card rejected">
+    <image src="/images/icons/status-rejected.png" class="status-icon" mode="aspectFit"/>
+    <text class="status-title">认证未通过</text>
+    <text class="status-reason">{{authStatus.reviewComment || '请重新提交认证信息'}}</text>
+    <view class="resubmit-btn" bindtap="resubmit">重新提交</view>
+  </view>
+
+  <!-- 认证表单 -->
+  <view wx:else class="form-card">
+    <text class="form-title">企业认证</text>
+
+    <!-- 步骤条 -->
+    <view class="steps">
+      <view class="step {{step >= 1 ? 'active' : ''}} {{step > 1 ? 'done' : ''}}">
+        <view class="step-num">{{step > 1 ? '✓' : '1'}}</view>
+        <text class="step-label">基本信息</text>
+      </view>
+      <view class="step-line {{step > 1 ? 'done' : ''}}"/>
+      <view class="step {{step >= 2 ? 'active' : ''}} {{step > 2 ? 'done' : ''}}">
+        <view class="step-num">{{step > 2 ? '✓' : '2'}}</view>
+        <text class="step-label">上传证照</text>
+      </view>
+      <view class="step-line {{step > 2 ? 'done' : ''}}"/>
+      <view class="step {{step >= 3 ? 'active' : ''}} {{step > 3 ? 'done' : ''}}">
+        <view class="step-num">{{step > 3 ? '✓' : '3'}}</view>
+        <text class="step-label">法人验证</text>
+      </view>
+      <view class="step-line {{step > 3 ? 'done' : ''}}"/>
+      <view class="step {{step >= 4 ? 'active' : ''}}">
+        <view class="step-num">4</view>
+        <text class="step-label">确认提交</text>
+      </view>
+    </view>
+
+    <!-- Step 1 -->
+    <view wx:if="{{step === 1}}">
+      <view class="form-group">
+        <text class="label">企业名称 <text class="required">*</text></text>
+        <input value="{{form.companyName}}" placeholder="请输入企业全称" data-field="companyName" bindinput="onInput"/>
+      </view>
+      <view class="form-group">
+        <text class="label">统一社会信用代码 <text class="required">*</text></text>
+        <input value="{{form.creditCode}}" placeholder="18位信用代码" maxlength="18" data-field="creditCode" bindinput="onInput"/>
+      </view>
+      <view class="step-btn" bindtap="nextStep">下一步</view>
+    </view>
+
+    <!-- Step 2 -->
+    <view wx:elif="{{step === 2}}">
+      <view class="form-group">
+        <text class="label">营业执照</text>
+        <view class="upload-box" data-field="licenseUrl" bindtap="uploadImage">
+          <image wx:if="{{form.licenseUrl}}" src="{{form.licenseUrl}}" mode="aspectFit" class="upload-preview"/>
+          <text wx:else class="upload-text">+ 点击上传</text>
+        </view>
+      </view>
+      <view class="step-btn-group">
+        <view class="step-btn secondary" bindtap="prevStep">上一步</view>
+        <view class="step-btn" bindtap="nextStep">下一步</view>
+      </view>
+    </view>
+
+    <!-- Step 3 -->
+    <view wx:elif="{{step === 3}}">
+      <view class="form-group">
+        <text class="label">法人身份证</text>
+        <view class="upload-box" data-field="legalPersonIdUrl" bindtap="uploadImage">
+          <image wx:if="{{form.legalPersonIdUrl}}" src="{{form.legalPersonIdUrl}}" mode="aspectFit" class="upload-preview"/>
+          <text wx:else class="upload-text">+ 点击上传</text>
+        </view>
+      </view>
+      <view class="form-group">
+        <text class="label">人脸识别验证</text>
+        <view class="face-verify {{form.legalFaceVerified ? 'verified' : ''}}" bindtap="doFaceVerify">
+          <text>{{form.legalFaceVerified ? '已验证' : '点击进行人脸识别'}}</text>
+        </view>
+      </view>
+      <view class="step-btn-group">
+        <view class="step-btn secondary" bindtap="prevStep">上一步</view>
+        <view class="step-btn" bindtap="nextStep">下一步</view>
+      </view>
+    </view>
+
+    <!-- Step 4 -->
+    <view wx:else>
+      <view class="confirm-item"><text class="confirm-label">企业名称</text><text>{{form.companyName}}</text></view>
+      <view class="confirm-item"><text class="confirm-label">信用代码</text><text>{{form.creditCode}}</text></view>
+      <view class="confirm-item"><text class="confirm-label">营业执照</text><text>{{form.licenseUrl ? '已上传' : '未上传'}}</text></view>
+      <view class="confirm-item"><text class="confirm-label">法人身份证</text><text>{{form.legalPersonIdUrl ? '已上传' : '未上传'}}</text></view>
+      <view class="confirm-item"><text class="confirm-label">人脸识别</text><text>{{form.legalFaceVerified ? '已验证' : '未验证'}}</text></view>
+      <view class="step-btn-group">
+        <view class="step-btn secondary" bindtap="prevStep">上一步</view>
+        <view class="step-btn" bindtap="handleSubmit">提交认证</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,16 @@
+.detail-page { padding: 24rpx; }
+.article-header { background: #fff; border-radius: 16rpx; padding: 32rpx; margin-bottom: 20rpx; }
+.article-type-tag {
+  font-size: 22rpx; padding: 6rpx 16rpx; border-radius: 6rpx; display: inline-block; margin-bottom: 16rpx;
+}
+.article-type-tag.policy { background: #FFF0E6; color: #FF8F1F; }
+.article-type-tag.news { background: #E8F4FF; color: #165DFF; }
+.article-title { font-size: 36rpx; font-weight: 700; color: #1A1A1A; display: block; line-height: 1.5; margin-bottom: 20rpx; }
+.article-meta { display: flex; font-size: 24rpx; color: #999; }
+.article-meta text { margin-right: 24rpx; }
+.cover-img { width: 100%; border-radius: 16rpx; margin-bottom: 20rpx; }
+.article-content {
+  background: #fff; border-radius: 16rpx; padding: 32rpx;
+  font-size: 28rpx; color: #666; line-height: 1.8;
+}
+.loading { text-align: center; color: #999; padding: 100rpx 0; }

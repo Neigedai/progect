@@ -1,0 +1,11 @@
+.notification-page { padding: 24rpx; }
+.empty { text-align: center; color: #999; padding: 120rpx 0; font-size: 28rpx; }
+.notify-card { background: #fff; border-radius: 16rpx; padding: 24rpx 28rpx; margin-bottom: 16rpx; position: relative; }
+.notify-card.unread { border-left: 6rpx solid #165DFF; }
+.notify-top { display: flex; align-items: center; margin-bottom: 12rpx; }
+.notify-title { flex: 1; font-size: 28rpx; font-weight: 500; color: #1A1A1A; }
+.unread-dot { width: 14rpx; height: 14rpx; border-radius: 50%; background: #FF3141; }
+.notify-content { font-size: 24rpx; color: #666; line-height: 1.6; display: block; margin-bottom: 12rpx; }
+.notify-time { font-size: 22rpx; color: #999; }
+.mark-all { text-align: center; color: #165DFF; font-size: 26rpx; padding: 20rpx; }
+.load-more { text-align: center; color: #165DFF; padding: 20rpx; font-size: 26rpx; }

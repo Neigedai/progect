@@ -25,7 +25,9 @@ public class EnterpriseAuthController {
     private final com.park.service.NotificationService notificationService;
 
     private Long getCurrentUserId() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) return null;
+        String username = auth.getName();
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         return user != null ? user.getId() : null;
     }

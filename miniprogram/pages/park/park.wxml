@@ -1,0 +1,46 @@
+<view class="park-page">
+  <view class="park-switcher">
+    <picker mode="selector" range="{{parkNames}}" value="{{currentIdx}}" bindchange="onSwitch">
+      <view class="switcher-btn">
+        <text>{{currentPark.parkName || '选择园区'}}</text>
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <view wx:if="{{overview}}" class="park-content">
+    <view class="info-card">
+      <text class="park-name">{{overview.parkInfo.parkName}}</text>
+      <text class="park-address">{{overview.parkInfo.address}}</text>
+      <text class="park-desc">{{overview.parkInfo.description}}</text>
+    </view>
+
+    <view wx:if="{{overview.facilities && overview.facilities.length}}" class="section">
+      <text class="section-title">配套设施</text>
+      <view class="facility-list">
+        <view wx:for="{{overview.facilities}}" wx:key="id" class="facility-card">
+          <image wx:if="{{item.icon}}" src="{{item.icon}}" mode="aspectFit" class="facility-icon"/>
+          <text class="facility-name">{{item.facilityName || item.name}}</text>
+          <text class="facility-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{overview.honors && overview.honors.length}}" class="section">
+      <text class="section-title">荣誉资质</text>
+      <view class="honor-list">
+        <view wx:for="{{overview.honors}}" wx:key="id" class="honor-card">
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFit" class="honor-img"/>
+          <text class="honor-name">{{item.honorName || item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{overview.parkInfo.transportInfo}}" class="section">
+      <text class="section-title">交通信息</text>
+      <text class="transport-text">{{overview.parkInfo.transportInfo}}</text>
+    </view>
+  </view>
+
+  <view wx:else class="loading">加载中...</view>
+</view>

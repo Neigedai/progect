@@ -1,0 +1,55 @@
+<view class="detail-page">
+  <view wx:if="{{detail}}" class="detail-content">
+    <view class="info-card">
+      <text class="detail-title">{{detail.serviceName}}</text>
+      <view class="detail-meta">
+        <text class="meta-tag">{{detail.categoryName}}</text>
+        <text class="meta-enterprise">{{detail.applicableEnterprise || '适用各类企业'}}</text>
+      </view>
+      <text class="detail-desc">{{detail.detailDesc}}</text>
+    </view>
+
+    <view wx:if="{{detail.steps && detail.steps.length}}" class="steps-card">
+      <text class="card-title">办理流程</text>
+      <view class="steps-list">
+        <view wx:for="{{detail.steps}}" wx:key="index" class="step-item">
+          <view class="step-num">{{index + 1}}</view>
+          <view class="step-info">
+            <text class="step-title">{{item.title}}</text>
+            <text class="step-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.priceInfo}}" class="price-card">
+      <text class="card-title">费用说明</text>
+      <view class="price-row">
+        <text class="price-label">服务费用</text>
+        <text class="price-value">{{detail.priceInfo.price}}</text>
+      </view>
+      <view wx:if="{{detail.priceInfo.subsidy}}" class="price-row">
+        <text class="price-label">政府补贴</text>
+        <text class="price-value subsidy">{{detail.priceInfo.subsidy}}</text>
+      </view>
+      <view wx:if="{{detail.priceInfo.note}}" class="price-row">
+        <text class="price-label">备注</text>
+        <text class="price-value">{{detail.priceInfo.note}}</text>
+      </view>
+    </view>
+
+    <view class="action-card">
+      <view class="apply-btn" bindtap="handleApply">立即办理</view>
+    </view>
+  </view>
+  <view wx:else class="loading">加载中...</view>
+
+  <view wx:if="{{showQr}}" class="qr-overlay" bindtap="closeQr">
+    <view class="qr-dialog" catchtap="">
+      <text class="qr-title">立即办理</text>
+      <image wx:if="{{qrImage}}" src="{{qrImage}}" mode="widthFix" class="qr-img"/>
+      <text wx:else class="qr-empty">暂无办理入口</text>
+      <view class="qr-close" bindtap="closeQr">关闭</view>
+    </view>
+  </view>
+</view>

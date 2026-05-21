@@ -1,0 +1,52 @@
+.enterprise-page { padding: 24rpx; }
+.status-card { background: #fff; border-radius: 24rpx; padding: 60rpx 40rpx; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.status-icon { width: 80rpx; height: 80rpx; margin-bottom: 20rpx; }
+.status-title { font-size: 34rpx; font-weight: 600; color: #1A1A1A; margin-bottom: 12rpx; }
+.status-company { font-size: 28rpx; color: #666; margin-bottom: 12rpx; }
+.status-time { font-size: 24rpx; color: #999; }
+.status-reason { font-size: 26rpx; color: #FF3141; margin-bottom: 32rpx; max-width: 500rpx; }
+.resubmit-btn { padding: 16rpx 48rpx; border-radius: 36rpx; background: #165DFF; color: #fff; font-size: 28rpx; }
+
+.form-card { background: #fff; border-radius: 24rpx; padding: 36rpx 28rpx; }
+.form-title { font-size: 36rpx; font-weight: 700; display: block; margin-bottom: 32rpx; }
+
+.steps { display: flex; align-items: center; justify-content: center; margin-bottom: 48rpx; }
+.step { display: flex; flex-direction: column; align-items: center; }
+.step .step-num { margin-bottom: 8rpx; }
+.step-num {
+  width: 48rpx; height: 48rpx; border-radius: 50%; background: #F5F6FA;
+  color: #999; font-size: 24rpx; display: flex; align-items: center; justify-content: center;
+}
+.step.active .step-num { background: #165DFF; color: #fff; }
+.step.done .step-num { background: #00B578; color: #fff; }
+.step-label { font-size: 20rpx; color: #999; }
+.step-line { width: 60rpx; height: 2rpx; background: #F5F6FA; margin: 0 8rpx; margin-bottom: 20rpx; }
+.step-line.done { background: #00B578; }
+
+.form-group { margin-bottom: 28rpx; }
+.label { font-size: 28rpx; color: #1A1A1A; display: block; margin-bottom: 12rpx; }
+.required { color: #FF3141; }
+.form-group input { height: 80rpx; background: #F5F6FA; border-radius: 12rpx; padding: 0 20rpx; font-size: 28rpx; width: 100%; box-sizing: border-box; }
+.upload-box {
+  width: 100%; height: 200rpx; background: #F5F6FA; border-radius: 12rpx;
+  border: 2rpx dashed #ddd; display: flex; align-items: center; justify-content: center;
+}
+.upload-text { color: #999; font-size: 28rpx; }
+.upload-preview { width: 100%; height: 100%; }
+.face-verify {
+  height: 80rpx; background: #F5F6FA; border-radius: 12rpx;
+  display: flex; align-items: center; justify-content: center; font-size: 28rpx; color: #999;
+}
+.face-verify.verified { background: #E6FFEF; color: #00B578; }
+
+.step-btn {
+  height: 80rpx; border-radius: 12rpx; background: linear-gradient(135deg, #165DFF, #4080FF);
+  color: #fff; font-size: 30rpx; display: flex; align-items: center; justify-content: center;
+}
+.step-btn.secondary { background: #F5F6FA; color: #666; }
+.step-btn-group { display: flex; }
+.step-btn-group .step-btn { flex: 1; }
+.step-btn-group .step-btn:first-child { margin-right: 20rpx; }
+
+.confirm-item { display: flex; justify-content: space-between; padding: 20rpx 0; border-bottom: 1rpx solid #EBEDF0; font-size: 26rpx; color: #1A1A1A; }
+.confirm-label { color: #999; }

@@ -1,0 +1,63 @@
+<view class="home-page">
+  <!-- Banner -->
+  <swiper wx:if="{{banners.length}}" class="banner-swiper" indicator-dots autoplay circular interval="4000">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image src="{{item.imageUrl}}" mode="aspectFill" class="banner-img"/>
+    </swiper-item>
+  </swiper>
+
+  <!-- 快捷入口 -->
+  <view class="quick-entries">
+    <view class="entry-item" bindtap="goPark">
+      <image src="/images/icons/park.png" class="entry-icon" mode="aspectFit"/>
+      <text class="entry-label">园区概况</text>
+    </view>
+    <view class="entry-item" bindtap="goService">
+      <image src="/images/icons/service_entry.png" class="entry-icon" mode="aspectFit"/>
+      <text class="entry-label">服务大厅</text>
+    </view>
+    <view class="entry-item" bindtap="goApply">
+      <image src="/images/icons/apply.png" class="entry-icon" mode="aspectFit"/>
+      <text class="entry-label">入驻申请</text>
+    </view>
+    <view class="entry-item" bindtap="goEnterprise">
+      <image src="/images/icons/enterprise.png" class="entry-icon" mode="aspectFit"/>
+      <text class="entry-label">企业认证</text>
+    </view>
+  </view>
+
+  <!-- 热门服务 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热门服务</text>
+      <text class="section-more" bindtap="goMoreService">更多 ></text>
+    </view>
+    <view class="service-list">
+      <view wx:for="{{hotServices}}" wx:key="id" class="service-card" data-id="{{item.id}}" bindtap="goServiceDetail">
+        <text class="service-name">{{item.serviceName}}</text>
+        <text class="service-desc">{{item.summary}}</text>
+        <text class="service-tag">{{item.applicableEnterprise || '适用各类企业'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 政策资讯 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">政策资讯</text>
+      <text class="section-more" bindtap="goMoreArticle">更多 ></text>
+    </view>
+    <view class="article-list">
+      <view wx:for="{{policyArticles}}" wx:key="id" class="article-card" data-id="{{item.id}}" bindtap="goArticleDetail">
+        <image wx:if="{{item.coverImage}}" src="{{item.coverImage}}" mode="aspectFill" class="article-img"/>
+        <view class="article-info">
+          <text class="article-title">{{item.title}}</text>
+          <view class="article-meta">
+            <text class="article-date">{{item.publishTime}}</text>
+            <text class="article-type {{item.type}}">{{item.type === 'policy' ? '政策' : '资讯'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

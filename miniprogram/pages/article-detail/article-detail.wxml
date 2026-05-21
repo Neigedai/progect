@@ -1,0 +1,20 @@
+<view class="detail-page">
+  <view wx:if="{{article}}">
+    <view class="article-header">
+      <text class="article-type-tag {{article.type}}">{{article.type === 'policy' ? '政策' : '园区动态'}}</text>
+      <text class="article-title">{{article.title}}</text>
+      <view class="article-meta">
+        <text>{{article.author}}</text>
+        <text>{{article.publishTime}}</text>
+        <text>{{article.viewCount}} 阅读</text>
+      </view>
+    </view>
+
+    <image wx:if="{{article.coverImage}}" src="{{article.coverImage}}" mode="widthFix" class="cover-img"/>
+
+    <view class="article-content">
+      <rich-text nodes="{{content}}"/>
+    </view>
+  </view>
+  <view wx:else class="loading">加载中...</view>
+</view>

@@ -1,0 +1,15 @@
+<view class="notification-page">
+  <view wx:if="{{list.length === 0}}" class="empty">暂无消息</view>
+
+  <view wx:for="{{list}}" wx:key="id" class="notify-card {{item.isRead ? '' : 'unread'}}" data-item="{{item}}" bindtap="handleRead">
+    <view class="notify-top">
+      <text class="notify-title">{{item.title}}</text>
+      <view wx:if="{{!item.isRead}}" class="unread-dot"/>
+    </view>
+    <text class="notify-content">{{item.content}}</text>
+    <text class="notify-time">{{formatTime(item.createTime)}}</text>
+  </view>
+
+  <view wx:if="{{list.length > 0}}" class="mark-all" bindtap="handleMarkAll">全部已读</view>
+  <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMore">加载更多</view>
+</view>

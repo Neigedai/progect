@@ -1,0 +1,30 @@
+<view class="article-page">
+  <view class="type-bar">
+    <view class="type-item {{activeType === '' ? 'active' : ''}}" data-type="" bindtap="switchType">全部</view>
+    <view class="type-item {{activeType === 'news' ? 'active' : ''}}" data-type="news" bindtap="switchType">园区动态</view>
+    <view class="type-item {{activeType === 'policy' ? 'active' : ''}}" data-type="policy" bindtap="switchType">政策文章</view>
+  </view>
+
+  <view class="search-row">
+    <input value="{{keyword}}" placeholder="搜索资讯" confirm-type="search" bindinput="onSearchInput" bindconfirm="doSearch"/>
+    <view class="search-btn" bindtap="doSearch">搜索</view>
+  </view>
+
+  <view class="article-list">
+    <view wx:for="{{list}}" wx:key="id" class="article-card" data-id="{{item.id}}" bindtap="goDetail">
+      <image wx:if="{{item.coverImage}}" src="{{item.coverImage}}" mode="aspectFill" class="article-img"/>
+      <view class="article-info">
+        <text class="article-title">{{item.title}}</text>
+        <text class="article-summary">{{item.summary}}</text>
+        <view class="article-meta">
+          <text class="meta-date">{{item.publishTime}}</text>
+          <text class="meta-type {{item.type}}">{{item.type === 'policy' ? '政策' : '资讯'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{list.length === 0}}" class="empty">暂无资讯</view>
+  <view wx:elif="{{hasMore}}" class="load-more" bindtap="loadMore">加载更多</view>
+  <view wx:else class="no-more">— 没有更多了 —</view>
+</view>

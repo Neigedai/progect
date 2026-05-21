@@ -1,0 +1,50 @@
+.home-page { padding-bottom: 32rpx; }
+.banner-swiper { width: 100%; height: 320rpx; }
+.banner-img { width: 100%; height: 100%; }
+
+.quick-entries {
+  display: flex; justify-content: space-around;
+  padding: 32rpx 24rpx; background: #fff;
+  margin: 0 24rpx; border-radius: 24rpx;
+}
+.entry-item { display: flex; flex-direction: column; align-items: center; }
+.entry-icon {
+  width: 88rpx; height: 88rpx; border-radius: 20rpx;
+  margin-bottom: 12rpx;
+}
+.entry-label { font-size: 24rpx; color: #666; }
+
+.section { margin: 24rpx; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx; }
+.section-title { font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+.section-more { font-size: 26rpx; color: #165DFF; }
+
+.service-list { display: flex; flex-wrap: wrap; justify-content: space-between; }
+.service-card {
+  width: 48%; background: #fff;
+  border-radius: 16rpx; padding: 24rpx; box-sizing: border-box;
+  margin-bottom: 20rpx;
+}
+.service-name { font-size: 30rpx; font-weight: 600; color: #1A1A1A; display: block; margin-bottom: 12rpx; }
+.service-desc {
+  font-size: 24rpx; color: #999; display: block;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 12rpx;
+}
+.service-tag { font-size: 20rpx; color: #165DFF; background: #E8F4FF; padding: 4rpx 12rpx; border-radius: 6rpx; }
+
+.article-list { display: flex; flex-direction: column; }
+.article-card {
+  background: #fff; border-radius: 16rpx; padding: 24rpx; display: flex;
+  margin-bottom: 16rpx;
+}
+.article-img { width: 160rpx; height: 120rpx; border-radius: 12rpx; flex-shrink: 0; margin-right: 20rpx; }
+.article-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.article-title {
+  font-size: 28rpx; color: #1A1A1A; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.article-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12rpx; }
+.article-date { font-size: 22rpx; color: #999; }
+.article-type { font-size: 20rpx; padding: 4rpx 12rpx; border-radius: 6rpx; }
+.article-type.policy { background: #FFF0E6; color: #FF8F1F; }
+.article-type.news { background: #E8F4FF; color: #165DFF; }

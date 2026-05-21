@@ -1,0 +1,45 @@
+<view class="mine-page">
+  <view class="user-card">
+    <view class="avatar">
+      <text>{{initial}}</text>
+    </view>
+    <view class="user-info">
+      <text class="user-name">{{displayName}}</text>
+      <text class="user-phone">{{user.phone || ''}}</text>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goNotifications">
+      <image src="/images/icons/menu-notification.png" class="menu-icon" mode="aspectFit"/>
+      <text class="menu-label">消息通知</text>
+      <view wx:if="{{unreadCount}}" class="badge">{{unreadCount > 99 ? '99+' : unreadCount}}</view>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goEnterprise">
+      <image src="/images/icons/menu-enterprise.png" class="menu-icon" mode="aspectFit"/>
+      <text class="menu-label">企业认证</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goApply">
+      <image src="/images/icons/menu-apply.png" class="menu-icon" mode="aspectFit"/>
+      <text class="menu-label">入驻申请</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goPark">
+      <image src="/images/icons/menu-park.png" class="menu-icon" mode="aspectFit"/>
+      <text class="menu-label">园区概况</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="handleAbout">
+      <image src="/images/icons/menu-about.png" class="menu-icon" mode="aspectFit"/>
+      <text class="menu-label">关于我们</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <view class="logout-btn" bindtap="handleLogout">退出登录</view>
+</view>

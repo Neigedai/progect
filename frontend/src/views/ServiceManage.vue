@@ -106,6 +106,7 @@
     <!-- 服务项目弹窗 -->
     <el-dialog v-model="itemDialogVisible" :title="itemEditId ? '编辑服务' : '新增服务'" width="800px" destroy-on-close>
       <el-form ref="itemFormRef" :model="itemForm" :rules="itemRules" label-width="100px">
+        <el-divider content-position="left">基本信息</el-divider>
         <el-form-item label="服务名称" prop="serviceName">
           <el-input v-model="itemForm.serviceName" />
         </el-form-item>
@@ -123,6 +124,7 @@
         <el-form-item label="详情描述" prop="detailDesc">
           <el-input v-model="itemForm.detailDesc" type="textarea" :rows="3" />
         </el-form-item>
+        <el-divider content-position="left">办理流程</el-divider>
         <el-form-item label="办理流程">
           <div v-for="(s, i) in itemForm.stepsList" :key="i" style="display:flex;gap:8px;margin-bottom:8px">
             <span style="line-height:32px;flex-shrink:0">第{{ i+1 }}步</span>
@@ -135,7 +137,15 @@
         <el-form-item label="费用说明">
           <div style="display:flex;flex-direction:column;gap:8px;width:100%">
             <el-input v-model="itemForm.priceInfo.price" placeholder="服务费用，如：8000-15000元" size="small" />
+          </div>
+        </el-form-item>
+        <el-form-item label="政府补贴">
+          <div style="display:flex;flex-direction:column;gap:8px;width:100%">
             <el-input v-model="itemForm.priceInfo.subsidy" placeholder="政府补贴，如：可申请奖励10-50万元" size="small" />
+          </div>
+        </el-form-item>
+        <el-form-item label="备注">
+          <div style="display:flex;flex-direction:column;gap:8px;width:100%">
             <el-input v-model="itemForm.priceInfo.note" placeholder="备注" size="small" />
           </div>
         </el-form-item>
