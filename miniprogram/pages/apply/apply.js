@@ -1,10 +1,28 @@
-const { submitResidency } = require('../../utils/api')
+const { submitResidency, getMe, getMyResidency } = require('../../utils/api')
 
 Page({
   data: {
     industries: ['信息技术', '生物医药', '智能制造', '新材料', '新能源', '现代服务', '文化创意', '其他'],
     industryIdx: -1,
-    form: { contactName: '', contactPhone: '', area: '', industryType: '', expectedEntryDate: '', additionalInfo: '' }
+    form: { contactName: '', contactPhone: '', area: '', industryType: '', expectedEntryDate: '', additionalInfo: '' },
+    myList: []
+  },
+
+  async onLoad() {
+    try {
+      const res = await getMe()
+      if (res && res.user && res.user.phone) {
+        this.setData({ ['form.contactPhone']: res.user.phone })
+      }
+    } catch (e) { /* */ }
+    this.fetchMyList()
+  },
+
+  async fetchMyList() {
+    try {
+      const res = await getMyResidency()
+      this.setData({ myList: res.records || [] })
+    } catch (e) { /* */ }
   },
 
   onInput(e) {
@@ -30,7 +48,11 @@ Page({
     try {
       await submitResidency(f)
       wx.showToast({ title: '提交成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
+      this.setData({
+        industryIdx: -1,
+        form: { contactName: this.data.form.contactName, contactPhone: this.data.form.contactPhone, area: '', industryType: '', expectedEntryDate: '', additionalInfo: '' }
+      })
+      this.fetchMyList()
     } catch (e) { /* */ }
   }
 })

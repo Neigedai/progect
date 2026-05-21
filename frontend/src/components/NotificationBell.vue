@@ -140,8 +140,8 @@ onUnmounted(() => {
 
 <style scoped>
 .bell-badge { line-height: 1; }
-.bell-icon { cursor: pointer; color: rgba(255, 255, 255, 0.9); transition: color 0.15s; }
-.bell-icon:hover { color: #fff; }
+.bell-icon { cursor: pointer; color: #64748B; transition: color 0.15s; }
+.bell-icon:hover { color: var(--primary); }
 .notif-panel { margin: -12px; }
 .notif-header {
   display: flex;

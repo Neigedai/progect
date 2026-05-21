@@ -1,15 +1,22 @@
 const { submitEnterpriseAuth, getEnterpriseAuthStatus } = require('../../utils/api')
+const { getMe } = require('../../utils/api')
 const { upload } = require('../../utils/request')
 
 Page({
   data: {
     authStatus: null,
     step: 1,
-    form: { companyName: '', creditCode: '', licenseUrl: '', legalPersonIdUrl: '', legalFaceVerified: false }
+    form: { companyName: '', creditCode: '', contactPhone: '', licenseUrl: '', legalPersonIdUrl: '', legalFaceVerified: false }
   },
 
   async onLoad() {
     try { this.setData({ authStatus: await getEnterpriseAuthStatus() }) } catch (e) { /* */ }
+    try {
+      const res = await getMe()
+      if (res.data && res.data.user && res.data.user.phone) {
+        this.setData({ ['form.contactPhone']: res.data.user.phone })
+      }
+    } catch (e) { /* */ }
   },
 
   onInput(e) {
@@ -53,7 +60,7 @@ Page({
 
   async handleSubmit() {
     try {
-      await submitEnterpriseAuth(this.data.form)
+      await submitEnterpriseAuth({ ...this.data.form, legalFaceVerified: false })
       wx.showToast({ title: '提交成功', icon: 'success' })
       setTimeout(() => {
         this.setData({

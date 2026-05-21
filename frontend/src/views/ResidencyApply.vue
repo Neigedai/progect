@@ -54,22 +54,43 @@
         </el-form-item>
       </el-form>
     </el-card>
+
+    <el-card v-if="myList.length" class="list-card">
+      <template #header><h3>我的申请记录</h3></template>
+      <el-table :data="myList" stripe>
+        <el-table-column prop="id" label="编号" width="70" />
+        <el-table-column prop="industryType" label="行业类型" width="110" />
+        <el-table-column prop="area" label="面积需求" width="110" />
+        <el-table-column prop="expectedEntryDate" label="预计入驻" width="120" />
+        <el-table-column label="状态" width="90">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 'approved' ? 'success' : row.status === 'rejected' ? 'danger' : 'warning'" size="small">
+              {{ row.status === 'approved' ? '已通过' : row.status === 'rejected' ? '已驳回' : '待审核' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="提交时间" min-width="160" />
+      </el-table>
+    </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { submitResidencyApplication } from '@/api/residency'
+import { submitResidencyApplication, getMyApplications } from '@/api/residency'
+import { useAuth } from '@/utils/auth'
 
 const router = useRouter()
+const { state: auth } = useAuth()
 const formRef = ref(null)
 const submitting = ref(false)
+const myList = ref([])
 
 const form = reactive({
-  contactName: '',
-  contactPhone: '',
+  contactName: auth.user?.nickname || '',
+  contactPhone: auth.user?.phone || '',
   area: '',
   industryType: '',
   expectedEntryDate: '',
@@ -86,6 +107,13 @@ const rules = {
   industryType: [{ required: true, message: '请选择行业类型', trigger: 'change' }]
 }
 
+const fetchMyList = async () => {
+  try {
+    const res = await getMyApplications({ page: 1, size: 50 })
+    myList.value = res.data.records || []
+  } catch { /* */ }
+}
+
 const handleSubmit = async () => {
   try {
     await formRef.value.validate()
@@ -96,13 +124,19 @@ const handleSubmit = async () => {
   try {
     await submitResidencyApplication({ ...form })
     ElMessage.success('入驻申请已提交')
-    router.push('/park-overview')
+    form.area = ''
+    form.industryType = ''
+    form.expectedEntryDate = ''
+    form.additionalInfo = ''
+    fetchMyList()
   } catch {
     ElMessage.error('提交失败，请稍后重试')
   } finally {
     submitting.value = false
   }
 }
+
+onMounted(() => { fetchMyList() })
 </script>
 
 <style scoped>
@@ -112,6 +146,14 @@ const handleSubmit = async () => {
 }
 .form-card {
   border-radius: var(--radius-lg);
+}
+.list-card {
+  border-radius: var(--radius-lg);
+  margin-top: 20px;
+}
+.list-card h3 {
+  margin: 0;
+  font-size: 16px;
 }
 .card-header {
   display: flex;

@@ -23,6 +23,7 @@ const getFloatingMenuItems = () => get('/floating-menu/items')
 
 // Residency
 const submitResidency = (data) => post('/residency/applications', data)
+const getMyResidency = () => get('/residency/applications/my')
 
 // Enterprise
 const submitEnterpriseAuth = (data) => post('/enterprise/submit', data)
@@ -39,7 +40,7 @@ module.exports = {
   getParkList, getParkOverview,
   getBanners, getArticles, getArticleDetail,
   getCategories, getServiceItems, getServiceDetail, getFloatingMenuItems,
-  submitResidency,
+  submitResidency, getMyResidency,
   submitEnterpriseAuth, getEnterpriseAuthStatus,
   getNotifications, getUnreadCount, markRead, markAllRead
 }

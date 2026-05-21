@@ -5,17 +5,17 @@
 
     <view class="form-group">
       <text class="label">联系人 <text class="required">*</text></text>
-      <input value="{{form.contactName}}" placeholder="请输入联系人姓名" data-field="contactName" bindinput="onInput"/>
+      <input value="{{form.contactName}}" placeholder="请输入联系人姓名" show-clear data-field="contactName" bindinput="onInput"/>
     </view>
 
     <view class="form-group">
       <text class="label">联系电话 <text class="required">*</text></text>
-      <input value="{{form.contactPhone}}" type="number" maxlength="11" placeholder="请输入手机号" data-field="contactPhone" bindinput="onInput"/>
+      <input value="{{form.contactPhone}}" type="number" maxlength="11" placeholder="请输入手机号" show-clear data-field="contactPhone" bindinput="onInput"/>
     </view>
 
     <view class="form-group">
       <text class="label">面积需求 <text class="required">*</text></text>
-      <input value="{{form.area}}" placeholder="如：200-500㎡" data-field="area" bindinput="onInput"/>
+      <input value="{{form.area}}" placeholder="如：200-500㎡" show-clear data-field="area" bindinput="onInput"/>
     </view>
 
     <view class="form-group">
@@ -38,9 +38,25 @@
 
     <view class="form-group">
       <text class="label">补充说明</text>
-      <textarea value="{{form.additionalInfo}}" placeholder="请输入其他需求或说明（选填）" data-field="additionalInfo" bindinput="onInput"/>
+      <textarea value="{{form.additionalInfo}}" placeholder="请输入其他需求或说明（选填）" show-clear data-field="additionalInfo" bindinput="onInput"/>
     </view>
 
     <view class="submit-btn" bindtap="handleSubmit">提交申请</view>
+  </view>
+
+  <view wx:if="{{myList.length}}" class="list-card">
+    <text class="list-title">我的申请记录</text>
+    <view wx:for="{{myList}}" wx:key="id" class="list-item">
+      <view class="item-row">
+        <text class="item-label">{{item.industryType}}</text>
+        <text class="item-status {{item.status === 'approved' ? 'status-ok' : item.status === 'rejected' ? 'status-no' : 'status-pending'}}">
+          {{item.status === 'approved' ? '已通过' : item.status === 'rejected' ? '已驳回' : '待审核'}}
+        </text>
+      </view>
+      <view class="item-row">
+        <text class="item-info">面积：{{item.area}}</text>
+        <text class="item-info">{{item.createTime}}</text>
+      </view>
+    </view>
   </view>
 </view>

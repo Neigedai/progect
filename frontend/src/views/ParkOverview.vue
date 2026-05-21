@@ -96,6 +96,8 @@ const onParkChange = (parkId) => {
 }
 
 onMounted(async () => {
+  // 获取轮播图
+
   const qParkId = route.query.parkId
   if (qParkId) {
     fetchOverview(qParkId)
@@ -128,34 +130,50 @@ watch(() => route.query.parkId, (newVal, oldVal) => {
   margin: 0 auto;
 }
 .park-hero {
-  background: linear-gradient(135deg, #165DFF 0%, #4080FF 100%);
-  border-radius: var(--radius-lg);
-  padding: 48px 40px;
-  margin-bottom: 32px;
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 40%, #165DFF 100%);
+  border-radius: var(--radius-xl);
+  padding: 56px 48px;
+  margin-bottom: 40px;
   color: #fff;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+.park-hero::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
 }
 .park-name {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
-  margin: 0 0 14px 0;
-  letter-spacing: 1px;
+  margin: 0 0 16px 0;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.02em;
+  color: #fff;
 }
 .park-address {
   font-size: 14px;
   margin: 0 0 10px 0;
-  opacity: 0.9;
+  opacity: 0.8;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .park-desc {
   font-size: 15px;
-  line-height: 1.7;
-  margin: 18px 0 0 0;
-  opacity: 0.95;
+  line-height: 1.8;
+  margin: 20px 0 0 0;
+  opacity: 0.85;
+  max-width: 700px;
 }
 .section {
-  margin-bottom: 36px;
+  margin-bottom: 44px;
 }
 .section-title {
   font-size: 18px;
@@ -165,20 +183,40 @@ watch(() => route.query.parkId, (newVal, oldVal) => {
   padding-left: 12px;
   border-left: 4px solid var(--primary);
 }
+.transport-content {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.transport-content p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
 .plan-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 .plan-image {
   max-width: 100%;
   max-height: 400px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 .plan-desc {
   font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-regular);
+  line-height: 1.8;
+  color: var(--text-secondary);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  margin: 0;
 }
 .image-placeholder {
   display: flex;
@@ -190,7 +228,7 @@ watch(() => route.query.parkId, (newVal, oldVal) => {
   color: var(--text-placeholder);
 }
 @media (max-width: 768px) {
-  .park-hero { padding: 28px 20px; }
-  .park-name { font-size: 22px; }
+  .park-hero { padding: 32px 24px; }
+  .park-name { font-size: 24px; }
 }
 </style>

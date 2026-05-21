@@ -6,7 +6,7 @@
   </view>
 
   <view class="search-row">
-    <input value="{{keyword}}" placeholder="搜索资讯" confirm-type="search" bindinput="onSearchInput" bindconfirm="doSearch"/>
+    <input value="{{keyword}}" placeholder="搜索资讯" confirm-type="search" show-clear bindinput="onSearchInput" bindconfirm="doSearch"/>
     <view class="search-btn" bindtap="doSearch">搜索</view>
   </view>
 

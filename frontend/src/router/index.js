@@ -113,9 +113,11 @@ const router = createRouter({
   routes
 })
 
+const protectedPaths = ['/apply/', '/enterprise-auth', '/admin/']
+
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  if (to.path !== '/login' && !token) {
+  if (to.path !== '/login' && !token && protectedPaths.some(p => to.path.startsWith(p))) {
     next('/login')
   } else {
     next()

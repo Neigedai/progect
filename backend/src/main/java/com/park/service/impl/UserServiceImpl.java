@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final Map<String, String> codeStore = new ConcurrentHashMap<>();
 
     @Override
     public Map<String, String> login(LoginRequest request) {
@@ -49,6 +51,14 @@ public class UserServiceImpl implements UserService {
         if (userMapper.exists(new LambdaQueryWrapper<User>().eq(User::getUsername, request.getUsername()))) {
             throw new IllegalArgumentException("用户名已存在");
         }
+        if (userMapper.exists(new LambdaQueryWrapper<User>().eq(User::getPhone, request.getPhone()))) {
+            throw new IllegalArgumentException("手机号已存在");
+        }
+        String savedCode = codeStore.get(request.getPhone());
+        if (savedCode == null || !savedCode.equals(request.getCode())) {
+            throw new IllegalArgumentException("验证码错误");
+        }
+        codeStore.remove(request.getPhone());
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -64,20 +74,15 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectOne(
                 new LambdaQueryWrapper<User>().eq(User::getPhone, request.getPhone()));
         if (user == null) {
-            // 手机号未注册，自动创建临时用户
-            user = new User();
-            user.setUsername("u" + request.getPhone().substring(Math.max(0, request.getPhone().length() - 8)));
-            user.setPassword(passwordEncoder.encode(request.getPhone()));
-            user.setNickname("用户" + request.getPhone().substring(Math.max(0, request.getPhone().length() - 4)));
-            user.setPhone(request.getPhone());
-            user.setStatus(1);
-            userMapper.insert(user);
+            // 未注册手机号，仅发送验证码，不创建用户
+            String code = String.format("%06d", new Random().nextInt(1000000));
+            codeStore.put(request.getPhone(), code);
+            return Map.of("code", code, "debug", true);
         }
         String code = String.format("%06d", new Random().nextInt(1000000));
         user.setVerificationCode(code);
         user.setVerificationCodeTime(LocalDateTime.now());
         userMapper.updateById(user);
-        // 开发环境直接返回验证码，生产环境需接入短信网关
         return Map.of("code", code, "debug", true);
     }
 

@@ -47,11 +47,6 @@
             <span v-else style="color:#999">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="人脸识别" width="90" align="center">
-          <template #default="{ row }">
-            <el-tag :type="row.legalFaceVerified ? 'success' : 'info'" size="small">{{ row.legalFaceVerified ? '已通过' : '未验证' }}</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column label="状态" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="statusType(row.authStatus)">{{ statusLabel(row.authStatus) }}</el-tag>
@@ -104,9 +99,6 @@
         <el-descriptions-item label="法人身份证" :span="2">
           <el-image v-if="detail.legalPersonIdUrl" :src="detail.legalPersonIdUrl" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdUrl]" preview-teleported />
           <span v-else>-</span>
-        </el-descriptions-item>
-        <el-descriptions-item label="人脸识别">
-          <el-tag :type="detail.legalFaceVerified ? 'success' : 'info'">{{ detail.legalFaceVerified ? '已通过' : '未验证' }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="状态">
           <el-tag :type="statusType(detail.authStatus)">{{ statusLabel(detail.authStatus) }}</el-tag>
@@ -200,4 +192,6 @@ fetchList()
 <style scoped>
 .admin-page { padding-bottom: 24px; }
 .admin-page .el-card { border-radius: var(--radius-lg); }
+:deep(.el-table__fixed-right) { z-index: 3; }
+:deep(.el-table__body tr.current-row > td) { z-index: 0; }
 </style>

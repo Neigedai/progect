@@ -32,7 +32,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="title" label="标题" min-width="140" />
-        <el-table-column prop="linkUrl" label="跳转链接" min-width="160" show-overflow-tooltip />
         <el-table-column prop="sortOrder" label="排序" width="70" />
         <el-table-column label="状态" width="80">
           <template #default="{ row }">
@@ -72,9 +71,6 @@
         <el-form-item label="图片" prop="imageUrl">
           <el-input v-model="form.imageUrl" placeholder="输入图片路径或上传" />
           <upload-btn @uploaded="url => form.imageUrl = url" />
-        </el-form-item>
-        <el-form-item label="跳转链接" prop="linkUrl">
-          <el-input v-model="form.linkUrl" placeholder="如 /park-overview 或 https://..." />
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
           <el-input-number v-model="form.sortOrder" :min="0" />
@@ -120,7 +116,7 @@ const editId = ref(null)
 const query = reactive({ page: 1, size: 10, title: '', status: null })
 
 const form = reactive({
-  title: '', imageUrl: '', linkUrl: '', sortOrder: 0, status: 1, timeRange: null
+  title: '', imageUrl: '', sortOrder: 0, status: 1, timeRange: null
 })
 
 const rules = {
@@ -148,7 +144,7 @@ const resetQuery = () => {
 
 const openDialog = async (row) => {
   Object.assign(form, {
-    title: '', imageUrl: '', linkUrl: '', sortOrder: 0, status: 1, timeRange: null
+    title: '', imageUrl: '', sortOrder: 0, status: 1, timeRange: null
   })
   if (row) {
     isEdit.value = true
@@ -181,7 +177,6 @@ const handleSubmit = async () => {
     const payload = {
       title: form.title,
       imageUrl: form.imageUrl,
-      linkUrl: form.linkUrl,
       sortOrder: form.sortOrder,
       status: form.status,
       beginTime: form.timeRange ? form.timeRange[0] : null,
