@@ -20,6 +20,7 @@ const getCategories = () => get('/services/categories')
 const getServiceItems = (params) => get('/services/items', params)
 const getServiceDetail = (id) => get('/services/items/' + id)
 const getFloatingMenuItems = () => get('/floating-menu/items')
+const submitServiceApplication = (data) => post('/services/applications', data)
 
 // Residency
 const submitResidency = (data) => post('/residency/applications', data)
@@ -39,7 +40,7 @@ module.exports = {
   login, phoneLogin, sendCode, getMe,
   getParkList, getParkOverview,
   getBanners, getArticles, getArticleDetail,
-  getCategories, getServiceItems, getServiceDetail, getFloatingMenuItems,
+  getCategories, getServiceItems, getServiceDetail, getFloatingMenuItems, submitServiceApplication,
   submitResidency, getMyResidency,
   submitEnterpriseAuth, getEnterpriseAuthStatus,
   getNotifications, getUnreadCount, markRead, markAllRead

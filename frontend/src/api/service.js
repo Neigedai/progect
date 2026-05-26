@@ -15,3 +15,7 @@ export function getServiceDetail(id) {
 export function getFloatingMenuItems() {
   return request.get('/floating-menu/items')
 }
+
+export function submitServiceApplication(data) {
+  return request.post('/services/applications', data)
+}

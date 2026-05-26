@@ -24,7 +24,11 @@ public class ParkServiceImpl implements ParkService {
 
     @Override
     public List<ParkInfo> listParks() {
-        return parkInfoMapper.selectList(null);
+        return parkInfoMapper.selectList(
+                new LambdaQueryWrapper<ParkInfo>()
+                        .eq(ParkInfo::getStatus, 1)
+                        .orderByAsc(ParkInfo::getSortOrder)
+        );
     }
 
     @Override

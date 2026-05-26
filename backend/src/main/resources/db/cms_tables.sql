@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS cms_article (
     summary VARCHAR(500) DEFAULT NULL COMMENT '摘要',
     content TEXT COMMENT '文章正文（Markdown/HTML）',
     cover_image VARCHAR(255) DEFAULT NULL COMMENT '封面图URL',
+    video_url VARCHAR(500) DEFAULT NULL COMMENT '视频地址',
     author VARCHAR(64) DEFAULT NULL COMMENT '作者',
     source VARCHAR(100) DEFAULT NULL COMMENT '来源',
     status TINYINT DEFAULT 0 COMMENT '状态: 0-草稿 1-已发布',
@@ -153,3 +154,6 @@ INSERT INTO cms_banner (title, image_url, link_url, sort_order, status, begin_ti
     'admin',
     'admin'
 );
+
+-- 增量迁移：为 cms_article 添加 video_url 列
+ALTER TABLE cms_article ADD COLUMN IF NOT EXISTS video_url VARCHAR(500) DEFAULT NULL COMMENT '视频地址' AFTER cover_image;

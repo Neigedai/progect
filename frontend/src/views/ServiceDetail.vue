@@ -64,28 +64,56 @@
     </template>
   </div>
 
-  <el-dialog v-model="applyDialogVisible" title="立即办理" width="360px" align-center>
+  <el-dialog v-model="applyDialogVisible" title="立即办理" width="400px" align-center destroy-on-close>
     <div style="text-align:center">
-      <img v-if="applyQrUrl" :src="applyQrUrl" alt="办理二维码" style="max-width:260px;border-radius:8px" />
-      <p v-else style="color:#999">暂无办理入口</p>
+      <img v-if="applyQrUrl" :src="applyQrUrl" alt="办理二维码" style="max-width:220px;border-radius:8px;margin-bottom:24px" />
+      <p v-if="!applyQrUrl" style="color:#999;margin-bottom:24px">暂无办理入口</p>
     </div>
+    <el-form ref="applyFormRef" :model="applyForm" :rules="applyRules" label-width="90px" style="margin-top:8px">
+      <el-form-item label="联系人" prop="contactName">
+        <el-input v-model="applyForm.contactName" placeholder="请输入联系人姓名" />
+      </el-form-item>
+      <el-form-item label="联系电话" prop="contactPhone">
+        <el-input v-model="applyForm.contactPhone" placeholder="请输入联系电话" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="applyDialogVisible = false">取消</el-button>
+      <el-button type="primary" :loading="applySubmitting" @click="handleApplySubmit">提交申请</el-button>
+    </template>
   </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getServiceDetail } from '@/api/service'
-import { getFloatingMenuItems } from '@/api/service'
+import { getServiceDetail, getFloatingMenuItems, submitServiceApplication } from '@/api/service'
 import { ElMessage } from 'element-plus'
+import { useAuth } from '@/utils/auth'
 
 const route = useRoute()
 const router = useRouter()
+const { state: auth } = useAuth()
 const loading = ref(false)
 const detail = ref(null)
 const applyDialogVisible = ref(false)
 const applyQrUrl = ref('')
+const applySubmitting = ref(false)
+const applyFormRef = ref(null)
+
+const applyForm = reactive({
+  contactName: '',
+  contactPhone: ''
+})
+
+const applyRules = {
+  contactName: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
+  contactPhone: [
+    { required: true, message: '请输入联系电话', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+  ]
+}
 
 const fetchDetail = async () => {
   const id = route.params.id
@@ -103,6 +131,8 @@ const fetchDetail = async () => {
 }
 
 const showApplyDialog = async () => {
+  applyForm.contactName = auth.user?.nickname || auth.user?.username || ''
+  applyForm.contactPhone = auth.user?.phone || ''
   try {
     const res = await getFloatingMenuItems()
     const items = res.data || []
@@ -116,6 +146,29 @@ const showApplyDialog = async () => {
   } catch {
     applyQrUrl.value = ''
     applyDialogVisible.value = true
+  }
+}
+
+const handleApplySubmit = async () => {
+  try {
+    await applyFormRef.value.validate()
+  } catch {
+    return
+  }
+  if (!detail.value) return
+  applySubmitting.value = true
+  try {
+    await submitServiceApplication({
+      serviceId: detail.value.id,
+      contactName: applyForm.contactName,
+      contactPhone: applyForm.contactPhone
+    })
+    ElMessage.success('申请已提交')
+    applyDialogVisible.value = false
+  } catch {
+    // error handled by interceptor
+  } finally {
+    applySubmitting.value = false
   }
 }
 

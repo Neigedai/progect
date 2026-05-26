@@ -49,6 +49,18 @@
       <text class="qr-title">立即办理</text>
       <image wx:if="{{qrImage}}" src="{{qrImage}}" mode="widthFix" class="qr-img"/>
       <text wx:else class="qr-empty">暂无办理入口</text>
+
+      <view class="apply-form">
+        <view class="form-group">
+          <text class="label">联系人</text>
+          <input value="{{applyForm.contactName}}" placeholder="请输入联系人姓名" data-field="contactName" bindinput="onApplyInput"/>
+        </view>
+        <view class="form-group">
+          <text class="label">联系电话</text>
+          <input value="{{applyForm.contactPhone}}" type="number" maxlength="11" placeholder="请输入联系电话" data-field="contactPhone" bindinput="onApplyInput"/>
+        </view>
+      </view>
+      <view class="qr-submit" bindtap="handleApplySubmit">提交申请</view>
       <view class="qr-close" bindtap="closeQr">关闭</view>
     </view>
   </view>

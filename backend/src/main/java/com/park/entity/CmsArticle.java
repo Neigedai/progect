@@ -14,6 +14,7 @@ public class CmsArticle {
     private String summary;
     private String content;
     private String coverImage;
+    private String videoUrl;
     private String author;
     private String source;
     private Integer status;

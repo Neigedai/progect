@@ -35,4 +35,20 @@ public class UploadController {
         Map<String, Object> result = fileService.uploadImage(file.getBytes(), file.getOriginalFilename());
         return Result.ok(result);
     }
+
+    @PostMapping("/video")
+    public Result<Map<String, Object>> uploadVideo(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return Result.fail(400, "文件不能为空");
+        }
+        if (file.getSize() > 100 * 1024 * 1024) {
+            return Result.fail(400, "文件大小不能超过 100MB");
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("video/")) {
+            return Result.fail(400, "仅支持视频文件");
+        }
+        Map<String, Object> result = fileService.uploadVideo(file.getBytes(), file.getOriginalFilename());
+        return Result.ok(result);
+    }
 }

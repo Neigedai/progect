@@ -1,13 +1,28 @@
 .park-page { padding: 24rpx; }
-.park-switcher { display: flex; justify-content: center; margin-bottom: 24rpx; }
-.switcher-btn {
-  display: flex; align-items: center;
-  background: #fff; padding: 16rpx 32rpx; border-radius: 36rpx;
-  font-size: 28rpx; font-weight: 600; color: #165DFF;
+.park-tabs {
+  display: flex;
+  white-space: nowrap;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
   box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.06);
 }
-.switcher-btn text:first-child { margin-right: 12rpx; }
-.arrow { font-size: 20rpx; color: #999; }
+.park-tab {
+  display: inline-block;
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #666;
+  border-radius: 10rpx;
+  border-bottom: 4rpx solid transparent;
+  transition: all 0.15s;
+}
+.park-tab.active {
+  color: #165DFF;
+  font-weight: 600;
+  border-bottom-color: #165DFF;
+}
 
 .info-card {
   background: linear-gradient(135deg, #165DFF, #4080FF);

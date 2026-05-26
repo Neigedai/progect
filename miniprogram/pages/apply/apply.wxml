@@ -3,45 +3,73 @@
     <text class="form-title">入驻申请</text>
     <text class="form-desc">填写以下信息，园区管理员将尽快与您联系</text>
 
-    <view class="form-group">
-      <text class="label">联系人 <text class="required">*</text></text>
-      <input value="{{form.contactName}}" placeholder="请输入联系人姓名" show-clear data-field="contactName" bindinput="onInput"/>
-    </view>
+    <view wx:if="{{showForm}}">
+      <view class="form-group">
+        <text class="label">法人姓名 <text class="required">*</text></text>
+        <input value="{{form.legalPersonName}}" placeholder="请输入法人姓名" show-clear data-field="legalPersonName" bindinput="onInput"/>
+      </view>
 
-    <view class="form-group">
-      <text class="label">联系电话 <text class="required">*</text></text>
-      <input value="{{form.contactPhone}}" type="number" maxlength="11" placeholder="请输入手机号" show-clear data-field="contactPhone" bindinput="onInput"/>
-    </view>
+      <view class="form-group">
+        <text class="label">法人联系电话 <text class="required">*</text></text>
+        <input value="{{form.legalPersonPhone}}" type="number" maxlength="11" placeholder="请输入手机号" disabled data-field="legalPersonPhone" bindinput="onInput"/>
+      </view>
 
-    <view class="form-group">
-      <text class="label">面积需求 <text class="required">*</text></text>
-      <input value="{{form.area}}" placeholder="如：200-500㎡" show-clear data-field="area" bindinput="onInput"/>
-    </view>
-
-    <view class="form-group">
-      <text class="label">行业类型 <text class="required">*</text></text>
-      <picker mode="selector" range="{{industries}}" value="{{industryIdx}}" bindchange="onIndustryChange">
-        <view class="picker-val {{form.industryType ? '' : 'placeholder'}}">
-          {{form.industryType || '请选择行业类型'}}
+      <view class="form-group">
+        <text class="label">身份证正面</text>
+        <view class="upload-row">
+          <image wx:if="{{form.legalPersonIdFront}}" src="{{form.legalPersonIdFront}}" mode="aspectFit" class="id-preview" bindtap="chooseIdFront" />
+          <view wx:else class="upload-btn" bindtap="chooseIdFront">
+            <text class="upload-icon">+</text>
+            <text class="upload-text">上传正面</text>
+          </view>
         </view>
-      </picker>
-    </view>
+      </view>
 
-    <view class="form-group">
-      <text class="label">预计入驻时间</text>
-      <picker mode="date" bindchange="onDateChange">
-        <view class="picker-val {{form.expectedEntryDate ? '' : 'placeholder'}}">
-          {{form.expectedEntryDate || '请选择日期'}}
+      <view class="form-group">
+        <text class="label">身份证反面</text>
+        <view class="upload-row">
+          <image wx:if="{{form.legalPersonIdBack}}" src="{{form.legalPersonIdBack}}" mode="aspectFit" class="id-preview" bindtap="chooseIdBack" />
+          <view wx:else class="upload-btn" bindtap="chooseIdBack">
+            <text class="upload-icon">+</text>
+            <text class="upload-text">上传反面</text>
+          </view>
         </view>
-      </picker>
+      </view>
+
+      <view class="form-group">
+        <text class="label">面积需求 <text class="required">*</text></text>
+        <input value="{{form.area}}" placeholder="如：200-500㎡" show-clear data-field="area" bindinput="onInput"/>
+      </view>
+
+      <view class="form-group">
+        <text class="label">行业类型 <text class="required">*</text></text>
+        <picker mode="selector" range="{{industries}}" value="{{industryIdx}}" bindchange="onIndustryChange">
+          <view class="picker-val {{form.industryType ? '' : 'placeholder'}}">
+            {{form.industryType || '请选择行业类型'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <text class="label">预计入驻时间</text>
+        <picker mode="date" bindchange="onDateChange">
+          <view class="picker-val {{form.expectedEntryDate ? '' : 'placeholder'}}">
+            {{form.expectedEntryDate || '请选择日期'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <text class="label">补充说明</text>
+        <textarea value="{{form.additionalInfo}}" placeholder="请输入其他需求或说明（选填）" show-clear data-field="additionalInfo" bindinput="onInput"/>
+      </view>
+
+      <view class="submit-btn" bindtap="handleSubmit">提交申请</view>
     </view>
 
-    <view class="form-group">
-      <text class="label">补充说明</text>
-      <textarea value="{{form.additionalInfo}}" placeholder="请输入其他需求或说明（选填）" show-clear data-field="additionalInfo" bindinput="onInput"/>
+    <view wx:else class="new-apply-box">
+      <view class="new-apply-btn" bindtap="onNewApply">填写新的入驻申请</view>
     </view>
-
-    <view class="submit-btn" bindtap="handleSubmit">提交申请</view>
   </view>
 
   <view wx:if="{{myList.length}}" class="list-card">
@@ -49,9 +77,9 @@
     <view wx:for="{{myList}}" wx:key="id" class="list-item">
       <view class="item-row">
         <text class="item-label">{{item.industryType}}</text>
-        <text class="item-status {{item.status === 'approved' ? 'status-ok' : item.status === 'rejected' ? 'status-no' : 'status-pending'}}">
+        <view class="item-status {{item.status === 'approved' ? 'status-ok' : item.status === 'rejected' ? 'status-no' : 'status-pending'}}">
           {{item.status === 'approved' ? '已通过' : item.status === 'rejected' ? '已驳回' : '待审核'}}
-        </text>
+        </view>
       </view>
       <view class="item-row">
         <text class="item-info">面积：{{item.area}}</text>

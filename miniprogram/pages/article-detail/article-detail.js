@@ -1,14 +1,44 @@
 const { getArticleDetail } = require('../../utils/api')
 
+const BASE_HOST = 'http://localhost:8080'
+
+function fixUrl(url) {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return BASE_HOST + url
+}
+
 Page({
-  data: { article: null, content: '' },
+  data: { article: null, content: '', videoLocalPath: '' },
 
   onLoad(options) {
     if (options.id) {
       getArticleDetail(options.id).then(a => {
-        this.setData({ article: a, content: this.parseMarkdown(a.content || '') })
+        if (a) {
+          a.coverImage = fixUrl(a.coverImage)
+          a.videoUrl = fixUrl(a.videoUrl)
+        }
+        const data = { article: a, content: this.parseMarkdown(a.content || '') }
+        this.setData(data)
+        if (a.videoUrl) {
+          this.downloadVideo(a.videoUrl)
+        }
       }).catch(() => {})
     }
+  },
+
+  downloadVideo(url) {
+    wx.showLoading({ title: '加载视频...' })
+    wx.downloadFile({
+      url,
+      success: res => {
+        if (res.statusCode === 200) {
+          this.setData({ videoLocalPath: res.tempFilePath })
+        }
+      },
+      fail: () => wx.showToast({ title: '视频加载失败', icon: 'none' }),
+      complete: () => wx.hideLoading()
+    })
   },
 
   parseMarkdown(md) {

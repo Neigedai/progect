@@ -28,6 +28,14 @@
     </el-card>
 
     <template v-else>
+      <el-card v-if="approvedResidency && !imported" class="import-card">
+        <div class="import-notice">
+          <el-icon :size="24" color="#165DFF"><InfoFilled /></el-icon>
+          <span>检测到您有已通过的入驻申请（法人：{{ approvedResidency.legalPersonName }}），可快捷带入基本信息</span>
+        </div>
+        <el-button type="primary" @click="doImport">导入信息</el-button>
+      </el-card>
+
       <el-card>
         <template #header>
           <h2 style="margin: 0">企业认证</h2>
@@ -49,7 +57,8 @@
               <el-input v-model="form.creditCode" placeholder="18位统一社会信用代码" maxlength="18" />
             </el-form-item>
             <el-form-item label="联系人手机号" prop="contactPhone">
-              <el-input v-model="form.contactPhone" placeholder="请输入手机号" />
+              <el-input v-model="form.contactPhone" placeholder="请输入手机号" :disabled="imported" />
+              <span v-if="imported" style="color:#999;font-size:12px">已从入驻申请导入</span>
             </el-form-item>
             <div style="text-align:center">
               <el-button type="primary" @click="nextStep">下一步</el-button>
@@ -68,8 +77,11 @@
               <el-image :src="form.licenseUrl" style="width:200px;height:130px;border-radius:4px;border:1px solid #eee" fit="contain" :preview-src-list="[form.licenseUrl]" preview-teleported />
             </div>
             <el-form-item label="法人身份证" required>
-              <UploadBtn v-model="form.legalPersonIdUrl" text="上传法人身份证" />
-              <div style="color: #999; font-size: 12px; margin-top: 4px">支持 JPG/PNG，最大 5MB</div>
+              <template v-if="!imported">
+                <UploadBtn v-model="form.legalPersonIdUrl" text="上传法人身份证" />
+                <div style="color: #999; font-size: 12px; margin-top: 4px">支持 JPG/PNG，最大 5MB</div>
+              </template>
+              <span v-else style="color:#999;font-size:12px">已从入驻申请导入</span>
             </el-form-item>
             <div v-if="form.legalPersonIdUrl" style="text-align:center;margin-bottom:18px">
               <el-image :src="form.legalPersonIdUrl" style="width:200px;height:130px;border-radius:4px;border:1px solid #eee" fit="contain" :preview-src-list="[form.legalPersonIdUrl]" preview-teleported />
@@ -86,7 +98,10 @@
           <el-descriptions :column="1" border>
             <el-descriptions-item label="企业名称">{{ form.companyName }}</el-descriptions-item>
             <el-descriptions-item label="统一社会信用代码">{{ form.creditCode }}</el-descriptions-item>
-            <el-descriptions-item label="联系人手机号">{{ form.contactPhone || '未填写' }}</el-descriptions-item>
+            <el-descriptions-item label="联系人手机号">
+              {{ form.contactPhone || '未填写' }}
+              <el-tag v-if="imported" size="small" type="info" style="margin-left:8px">已导入</el-tag>
+            </el-descriptions-item>
             <el-descriptions-item label="营业执照">
               <el-image v-if="form.licenseUrl" :src="form.licenseUrl" style="width:120px;height:80px" fit="contain" />
               <span v-else style="color:#999">未上传</span>
@@ -111,6 +126,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { CircleCheckFilled, CircleCloseFilled, Clock } from '@element-plus/icons-vue'
 import { submitEnterpriseAuth, getEnterpriseAuthStatus } from '@/api/enterprise'
+import { getMyApplications } from '@/api/residency'
 import { useAuth } from '@/utils/auth'
 import UploadBtn from '@/components/UploadBtn.vue'
 
@@ -118,6 +134,8 @@ const step = ref(0)
 const submitting = ref(false)
 const authData = ref(null)
 const basicFormRef = ref(null)
+const approvedResidency = ref(null)
+const imported = ref(false)
 
 const form = reactive({
   companyName: '',
@@ -150,6 +168,14 @@ const nextStep = async () => {
   step.value++
 }
 
+const doImport = () => {
+  const r = approvedResidency.value
+  if (!r) return
+  form.contactPhone = r.legalPersonPhone || ''
+  form.legalPersonIdUrl = r.legalPersonIdFront || ''
+  imported.value = true
+}
+
 const handleSubmit = async () => {
   submitting.value = true
   try {
@@ -164,7 +190,6 @@ const handleSubmit = async () => {
 }
 
 onMounted(async () => {
-  // 自动填入用户手机号
   try {
     const auth = useAuth()
     await auth.loadAuth()
@@ -174,6 +199,13 @@ onMounted(async () => {
     const res = await getEnterpriseAuthStatus()
     if (res.data) authData.value = res.data
   } catch {}
+  if (!authData.value) {
+    try {
+      const res = await getMyApplications({ page: 1, size: 50 })
+      const approved = (res.data.records || []).find(r => r.status === 'approved')
+      if (approved) approvedResidency.value = approved
+    } catch {}
+  }
 })
 </script>
 
@@ -191,5 +223,19 @@ onMounted(async () => {
 }
 .status-success h2, .status-pending h2, .status-rejected h2 {
   margin: 16px 0 8px;
+}
+.import-card {
+  border-radius: var(--radius-lg);
+  border-color: var(--primary);
+  background: var(--primary-light);
+  margin-bottom: 16px;
+}
+.import-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
 }
 </style>

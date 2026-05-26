@@ -12,6 +12,11 @@
 
     <image wx:if="{{article.coverImage}}" src="{{article.coverImage}}" mode="widthFix" class="cover-img"/>
 
+    <video wx:if="{{videoLocalPath}}" src="{{videoLocalPath}}" style="width:100%;height:400rpx" controls />
+    <view wx:elif="{{article.videoUrl && !videoLocalPath}}" style="display:flex;align-items:center;justify-content:center;height:400rpx;background:#000;color:#999;font-size:26rpx;border-radius:16rpx;margin-bottom:20rpx">
+      <text>视频加载中...</text>
+    </view>
+
     <view class="article-content">
       <rich-text nodes="{{content}}"/>
     </view>

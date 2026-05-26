@@ -96,12 +96,18 @@
           <el-input v-model="form.coverImage" placeholder="输入图片路径或上传" />
           <upload-btn @uploaded="url => form.coverImage = url" />
         </el-form-item>
+        <el-form-item label="视频文件" prop="videoUrl">
+          <el-input v-model="form.videoUrl" placeholder="输入视频路径或上传" />
+          <upload-btn accept="video/*" @uploaded="url => form.videoUrl = url" />
+        </el-form-item>
         <el-form-item label="摘要" prop="summary">
           <el-input v-model="form.summary" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="正文" prop="content">
-          <el-input v-model="form.content" type="textarea" :rows="10"
-            placeholder="支持 Markdown 格式（P1 替换为富文本编辑器）" />
+          <div style="border:1px solid var(--border);border-radius:var(--radius-sm)">
+            <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" mode="default" style="border-bottom:1px solid var(--border)" />
+            <Editor v-model="form.content" :defaultConfig="editorConfig" mode="default" @onCreated="onEditorCreated" style="height:400px" />
+          </div>
         </el-form-item>
         <el-form-item label="排序" prop="sortOrder">
           <el-input-number v-model="form.sortOrder" :min="0" />
@@ -119,10 +125,12 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, shallowRef, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getArticleList, getArticleDetail, createArticle, updateArticle, deleteArticle, updateArticleStatus } from '@/api/admin'
 import UploadBtn from '@/components/UploadBtn.vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import '@wangeditor/editor/dist/css/style.css'
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -132,11 +140,40 @@ const dialogVisible = ref(false)
 const isEdit = ref(false)
 const formRef = ref(null)
 const editId = ref(null)
+const editorRef = shallowRef()
+
+const toolbarConfig = {
+  excludeKeys: ['group-video']
+}
+const editorConfig = {
+  placeholder: '请输入正文...',
+  MENU_CONF: {
+    uploadImage: {
+      server: '/api/admin/upload/image',
+      fieldName: 'file',
+      headers: () => ({ Authorization: 'Bearer ' + localStorage.getItem('token') }),
+      customInsert(res, insertFn) {
+        if (res.code === 200 && res.data) {
+          insertFn(res.data, res.data, res.data)
+        }
+      }
+    }
+  }
+}
+
+const onEditorCreated = (editor) => {
+  editorRef.value = editor
+}
+
+onBeforeUnmount(() => {
+  const editor = editorRef.value
+  if (editor) editor.destroy()
+})
 
 const query = reactive({ page: 1, size: 10, title: '', type: '', status: null, author: '' })
 
 const form = reactive({
-  title: '', type: 'news', author: '', source: '', coverImage: '',
+  title: '', type: 'news', author: '', source: '', coverImage: '', videoUrl: '',
   summary: '', content: '', sortOrder: 0, status: 0
 })
 

@@ -1,7 +1,22 @@
 <template>
   <div class="park-overview" v-loading="loading">
-    <!-- P0: 园区切换器 -->
-    <ParkSwitcher @change="onParkChange" />
+    <!-- 园区选项卡 -->
+    <div class="park-tabs" role="tablist" aria-label="园区切换">
+      <div
+        v-for="p in parkList"
+        :key="p.id"
+        class="park-tab"
+        :class="{ active: activeParkId === p.id }"
+        role="tab"
+        :aria-selected="activeParkId === p.id"
+        :tabindex="activeParkId === p.id ? 0 : -1"
+        @click="switchPark(p.id)"
+        @keydown.enter.prevent="switchPark(p.id)"
+        @keydown.space.prevent="switchPark(p.id)"
+      >
+        {{ p.parkName }}
+      </div>
+    </div>
 
     <template v-if="parkInfo">
       <!-- 园区基础信息 -->
@@ -62,7 +77,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { getParkList, getParkOverview } from '@/api/park'
 import { ElMessage } from 'element-plus'
 import { Location, PictureFilled } from '@element-plus/icons-vue'
-import ParkSwitcher from '@/components/ParkSwitcher.vue'
 import FacilityList from '@/components/FacilityList.vue'
 import HonorCarousel from '@/components/HonorCarousel.vue'
 
@@ -72,6 +86,8 @@ const loading = ref(false)
 const parkInfo = ref(null)
 const facilities = ref([])
 const honors = ref([])
+const parkList = ref([])
+const activeParkId = ref(null)
 
 const fetchOverview = async (parkId) => {
   if (!parkId) return
@@ -91,34 +107,36 @@ const fetchOverview = async (parkId) => {
   }
 }
 
-const onParkChange = (parkId) => {
+const switchPark = (parkId) => {
+  if (parkId === activeParkId.value) return
+  activeParkId.value = parkId
+  router.push({ query: { parkId } })
   fetchOverview(parkId)
 }
 
 onMounted(async () => {
-  // 获取轮播图
+  try {
+    const res = await getParkList()
+    parkList.value = res.data || []
+  } catch {
+    parkList.value = []
+  }
 
   const qParkId = route.query.parkId
-  if (qParkId) {
-    fetchOverview(qParkId)
-  } else {
-    // 无参数时获取默认园区
-    try {
-      const res = await getParkList()
-      const parks = res.data || []
-      if (parks.length > 0) {
-        const def = parks.find(p => p.isDefault) || parks[0]
-        router.push({ query: { parkId: def.id } })
-        fetchOverview(def.id)
-      }
-    } catch {
-      // 静默处理
-    }
+  if (qParkId && parkList.value.find(p => String(p.id) === String(qParkId))) {
+    activeParkId.value = Number(qParkId)
+    fetchOverview(activeParkId.value)
+  } else if (parkList.value.length > 0) {
+    const def = parkList.value.find(p => p.isDefault) || parkList.value[0]
+    activeParkId.value = def.id
+    router.push({ query: { parkId: def.id } })
+    fetchOverview(def.id)
   }
 })
 
 watch(() => route.query.parkId, (newVal, oldVal) => {
   if (newVal && newVal !== oldVal) {
+    activeParkId.value = Number(newVal)
     fetchOverview(newVal)
   }
 })
@@ -128,6 +146,53 @@ watch(() => route.query.parkId, (newVal, oldVal) => {
 .park-overview {
   max-width: 1200px;
   margin: 0 auto;
+}
+.park-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.park-tabs::-webkit-scrollbar {
+  display: none;
+}
+.park-tab {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  user-select: none;
+  border-bottom: 2px solid transparent;
+  outline: none;
+}
+.park-tab:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+.park-tab:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+.park-tab.active {
+  color: var(--primary);
+  font-weight: 600;
+  border-bottom-color: var(--primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .park-tab {
+    transition: none;
+  }
 }
 .park-hero {
   background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 40%, #165DFF 100%);

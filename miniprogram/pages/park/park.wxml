@@ -1,12 +1,13 @@
 <view class="park-page">
-  <view class="park-switcher">
-    <picker mode="selector" range="{{parkNames}}" value="{{currentIdx}}" bindchange="onSwitch">
-      <view class="switcher-btn">
-        <text>{{currentPark.parkName || '选择园区'}}</text>
-        <text class="arrow">▼</text>
-      </view>
-    </picker>
-  </view>
+  <scroll-view scroll-x class="park-tabs" enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{parks}}"
+      wx:key="id"
+      class="park-tab {{activeParkId === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onSwitch"
+    >{{item.parkName}}</view>
+  </scroll-view>
 
   <view wx:if="{{overview}}" class="park-content">
     <view class="info-card">

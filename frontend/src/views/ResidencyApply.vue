@@ -9,12 +9,20 @@
           </el-breadcrumb>
         </div>
       </template>
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" style="max-width:640px">
-        <el-form-item label="联系人" prop="contactName">
-          <el-input v-model="form.contactName" placeholder="请输入联系人姓名" />
+      <el-form v-if="showForm" ref="formRef" :model="form" :rules="rules" label-width="130px" style="max-width:640px">
+        <el-form-item label="法人姓名" prop="legalPersonName">
+          <el-input v-model="form.legalPersonName" placeholder="请输入法人姓名" />
         </el-form-item>
-        <el-form-item label="联系电话" prop="contactPhone">
-          <el-input v-model="form.contactPhone" placeholder="请输入联系电话" />
+        <el-form-item label="法人联系电话" prop="legalPersonPhone">
+          <el-input v-model="form.legalPersonPhone" disabled />
+        </el-form-item>
+        <el-form-item label="身份证正面" prop="legalPersonIdFront">
+          <el-input v-model="form.legalPersonIdFront" placeholder="上传身份证正面" />
+          <upload-btn @uploaded="url => form.legalPersonIdFront = url" />
+        </el-form-item>
+        <el-form-item label="身份证反面" prop="legalPersonIdBack">
+          <el-input v-model="form.legalPersonIdBack" placeholder="上传身份证反面" />
+          <upload-btn @uploaded="url => form.legalPersonIdBack = url" />
         </el-form-item>
         <el-form-item label="面积需求" prop="area">
           <el-input v-model="form.area" placeholder="如：200-500㎡" />
@@ -53,6 +61,10 @@
           <el-button @click="$router.back()">返回</el-button>
         </el-form-item>
       </el-form>
+
+      <div v-if="!showForm && myList.length > 0" style="text-align:center;padding:20px 0">
+        <el-button type="primary" @click="showForm = true">填写新的入驻申请</el-button>
+      </div>
     </el-card>
 
     <el-card v-if="myList.length" class="list-card">
@@ -81,16 +93,20 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { submitResidencyApplication, getMyApplications } from '@/api/residency'
 import { useAuth } from '@/utils/auth'
+import UploadBtn from '@/components/UploadBtn.vue'
 
 const router = useRouter()
 const { state: auth } = useAuth()
 const formRef = ref(null)
 const submitting = ref(false)
 const myList = ref([])
+const showForm = ref(false)
 
 const form = reactive({
-  contactName: auth.user?.nickname || '',
-  contactPhone: auth.user?.phone || '',
+  legalPersonName: auth.user?.nickname || auth.user?.username || '',
+  legalPersonPhone: auth.user?.phone || '',
+  legalPersonIdFront: '',
+  legalPersonIdBack: '',
   area: '',
   industryType: '',
   expectedEntryDate: '',
@@ -98,9 +114,9 @@ const form = reactive({
 })
 
 const rules = {
-  contactName: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
-  contactPhone: [
-    { required: true, message: '请输入联系电话', trigger: 'blur' },
+  legalPersonName: [{ required: true, message: '请输入法人姓名', trigger: 'blur' }],
+  legalPersonPhone: [
+    { required: true, message: '请输入法人联系电话', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
   ],
   area: [{ required: true, message: '请输入面积需求', trigger: 'blur' }],
@@ -128,6 +144,8 @@ const handleSubmit = async () => {
     form.industryType = ''
     form.expectedEntryDate = ''
     form.additionalInfo = ''
+    form.legalPersonIdFront = ''
+    form.legalPersonIdBack = ''
     fetchMyList()
   } catch {
     ElMessage.error('提交失败，请稍后重试')
@@ -136,7 +154,10 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(() => { fetchMyList() })
+onMounted(async () => {
+  await fetchMyList()
+  showForm.value = myList.value.length === 0
+})
 </script>
 
 <style scoped>

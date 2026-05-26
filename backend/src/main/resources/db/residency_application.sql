@@ -2,8 +2,10 @@
 CREATE TABLE IF NOT EXISTS `residency_application` (
     `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
     `user_id` BIGINT NOT NULL COMMENT '用户ID',
-    `contact_name` VARCHAR(50) DEFAULT '' COMMENT '联系人',
-    `contact_phone` VARCHAR(20) DEFAULT '' COMMENT '联系电话',
+    `legal_person_name` VARCHAR(50) DEFAULT '' COMMENT '法人姓名',
+    `legal_person_phone` VARCHAR(20) DEFAULT '' COMMENT '法人联系电话',
+    `legal_person_id_front` VARCHAR(255) DEFAULT NULL COMMENT '身份证正面',
+    `legal_person_id_back` VARCHAR(255) DEFAULT NULL COMMENT '身份证反面',
     `area` VARCHAR(100) NOT NULL COMMENT '面积需求',
     `industry_type` VARCHAR(100) NOT NULL COMMENT '行业类型',
     `expected_entry_date` DATE DEFAULT NULL COMMENT '预计入驻时间',

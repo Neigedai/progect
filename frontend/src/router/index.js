@@ -7,6 +7,11 @@ const routes = [
     component: () => import('@/views/Login.vue')
   },
   {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/views/Dashboard.vue')
+  },
+  {
     path: '/',
     component: () => import('@/layout/MainLayout.vue'),
     children: [
@@ -65,6 +70,11 @@ const routes = [
         component: () => import('@/views/ServiceManage.vue')
       },
       {
+        path: 'admin/service-applications',
+        name: 'ServiceApplicationManage',
+        component: () => import('@/views/ServiceApplicationManage.vue')
+      },
+      {
         path: 'admin/floating-menu',
         name: 'FloatingMenuManage',
         component: () => import('@/views/FloatingMenuManage.vue')
@@ -113,7 +123,7 @@ const router = createRouter({
   routes
 })
 
-const protectedPaths = ['/apply/', '/enterprise-auth', '/admin/']
+const protectedPaths = ['/apply/', '/enterprise-auth', '/admin/', '/dashboard']
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')

@@ -11,8 +11,10 @@ public class ResidencyApplication {
     @TableId(type = IdType.AUTO)
     private Long id;
     private Long userId;
-    private String contactName;
-    private String contactPhone;
+    private String legalPersonName;
+    private String legalPersonPhone;
+    private String legalPersonIdFront;
+    private String legalPersonIdBack;
     private String area;
     private String industryType;
     private LocalDate expectedEntryDate;

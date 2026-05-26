@@ -24,6 +24,25 @@
   display: flex; align-items: center; justify-content: center; margin-top: 40rpx;
 }
 
+.new-apply-box { padding: 40rpx 0; text-align: center; }
+.new-apply-btn {
+  display: inline-block; padding: 24rpx 48rpx;
+  background: linear-gradient(135deg, #165DFF, #4080FF);
+  color: #fff; font-size: 30rpx; font-weight: 600; border-radius: 12rpx;
+}
+
+.upload-row { display: flex; align-items: center; }
+.upload-btn {
+  width: 160rpx; height: 100rpx; border: 2rpx dashed #ccc; border-radius: 10rpx;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #F5F6FA;
+}
+.upload-icon { font-size: 40rpx; color: #999; line-height: 1; }
+.upload-text { font-size: 20rpx; color: #999; margin-top: 4rpx; }
+.id-preview {
+  width: 160rpx; height: 100rpx; border-radius: 10rpx; border: 1rpx solid #EBEDF0;
+}
+
 .list-card { background: #fff; border-radius: 24rpx; padding: 36rpx 28rpx; margin-top: 24rpx; }
 .list-title { font-size: 32rpx; font-weight: 700; color: #1A1A1A; display: block; margin-bottom: 24rpx; }
 .list-item { border-bottom: 1rpx solid #F0F0F0; padding: 20rpx 0; }
@@ -31,7 +50,7 @@
 .item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
 .item-label { font-size: 28rpx; color: #1A1A1A; font-weight: 500; }
 .item-info { font-size: 24rpx; color: #999; }
-.item-status { font-size: 24rpx; padding: 4rpx 16rpx; border-radius: 8rpx; }
+.item-status { font-size: 22rpx; padding: 4rpx 14rpx; border-radius: 8rpx; line-height: 1; display: flex; align-items: center; }
 .status-pending { color: #E6A23C; background: #FDF6EC; }
 .status-ok { color: #67C23A; background: #F0F9EB; }
 .status-no { color: #F56C6C; background: #FEF0F0; }

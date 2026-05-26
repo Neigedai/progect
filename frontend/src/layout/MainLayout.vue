@@ -61,6 +61,7 @@
             <el-menu-item index="/admin/articles" v-if="hasPermission('article:view')">资讯管理</el-menu-item>
             <el-menu-item index="/admin/banners" v-if="hasPermission('banner:view')">轮播图管理</el-menu-item>
             <el-menu-item index="/admin/services" v-if="hasPermission('service:view')">服务管理</el-menu-item>
+            <el-menu-item index="/admin/service-applications" v-if="hasPermission('service:view')">服务申请管理</el-menu-item>
             <el-menu-item index="/admin/users" v-if="hasPermission('user:view')">用户管理</el-menu-item>
             <el-menu-item index="/admin/residency" v-if="hasPermission('residency:view')">入驻审批</el-menu-item>
             <el-menu-item index="/admin/enterprise" v-if="hasPermission('enterprise:view')">企业认证审核</el-menu-item>

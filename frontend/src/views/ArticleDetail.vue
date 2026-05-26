@@ -14,6 +14,7 @@
         </div>
       </div>
       <el-image v-if="article.coverImage" :src="article.coverImage" class="cover" fit="cover" />
+      <video v-if="article.videoUrl" :src="article.videoUrl" class="video" controls />
       <div class="content" v-html="renderedContent"></div>
     </template>
     <el-empty v-if="!loading && !article" description="文章不存在或已下架" />
@@ -60,6 +61,7 @@ onMounted(async () => {
 .title { font-size: 28px; font-weight: 700; color: var(--text-primary); margin: 14px 0; line-height: 1.4; }
 .meta { font-size: 13px; color: var(--text-secondary); display: flex; gap: 16px; flex-wrap: wrap; }
 .cover { width: 100%; max-height: 400px; border-radius: var(--radius); margin-bottom: 28px; }
+.video { width: 100%; max-height: 500px; border-radius: var(--radius); margin-bottom: 28px; background: #000; }
 .content { font-size: 15px; line-height: 1.9; color: var(--text-primary); }
 .content :deep(h3) { font-size: 18px; margin: 24px 0 12px; }
 .content :deep(h4) { font-size: 16px; margin: 20px 0 10px; }

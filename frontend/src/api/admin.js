@@ -117,6 +117,14 @@ export function updateFloatingMenuItemStatus(id, status) {
   return request({ url: `/floating-menu/admin/items/${id}/status`, method: 'patch', data: { status } })
 }
 
+export function getServiceApplications(params) {
+  return request({ url: '/admin/services/applications', method: 'get', params })
+}
+
+export function updateServiceApplication(id, data) {
+  return request({ url: `/admin/services/applications/${id}`, method: 'patch', data })
+}
+
 export function createHonor(parkId, data) {
   return request({ url: `/admin/parks/${parkId}/honors`, method: 'post', data })
 }
@@ -133,4 +141,10 @@ export function uploadImage(file) {
   const formData = new FormData()
   formData.append('file', file)
   return request({ url: '/admin/upload/image', method: 'post', data: formData, headers: { 'Content-Type': 'multipart/form-data' } })
+}
+
+export function uploadVideo(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request({ url: '/admin/upload/video', method: 'post', data: formData, headers: { 'Content-Type': 'multipart/form-data' } })
 }
