@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-card class="login-card">
       <template #header>
-        <h2>园区服务运营系统</h2>
+        <h2>米库产业创新公共服务平台</h2>
       </template>
       <el-tabs v-model="activeTab">
         <el-tab-pane label="密码登录" name="password">

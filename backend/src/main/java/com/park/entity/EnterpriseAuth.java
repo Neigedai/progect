@@ -14,6 +14,7 @@ public class EnterpriseAuth {
     private String creditCode;
     private String licenseUrl;
     private String legalPersonIdUrl;
+    private String legalPersonIdBackUrl;
     private Boolean legalFaceVerified;
     private String authStatus;
     private String reviewComment;

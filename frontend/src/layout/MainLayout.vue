@@ -4,8 +4,7 @@
     <div class="top-bar">
       <div class="top-bar-inner">
         <div class="top-left">
-          <div class="logo-icon"><el-icon :size="22"><OfficeBuilding /></el-icon></div>
-          <span class="logo-text">园区服务运营系统</span>
+          <img src="/logo2.jpg" alt="米库产业创新公共服务平台" class="logo-img" />
         </div>
         <div class="top-right">
           <template v-if="auth.state.user">
@@ -67,6 +66,7 @@
             <el-menu-item index="/admin/enterprise" v-if="hasPermission('enterprise:view')">企业认证审核</el-menu-item>
             <el-menu-item index="/admin/floating-menu" v-if="hasPermission('floating:view')">悬浮菜单</el-menu-item>
             <el-menu-item index="/admin/notifications" v-if="hasPermission('notification:view')">消息管理</el-menu-item>
+            <el-menu-item index="/admin/survey" v-if="hasPermission('user:view')">满意度调查</el-menu-item>
             <el-menu-item index="/admin/roles" v-if="hasPermission('role:view')">角色管理</el-menu-item>
           </el-sub-menu>
         </el-menu>
@@ -173,16 +173,9 @@ const logout = () => {
   align-items: center;
   gap: 10px;
 }
-.logo-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  background: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  flex-shrink: 0;
+.logo-img {
+  height: 36px;
+  object-fit: contain;
 }
 .logo-text {
   font-size: 15px;
@@ -276,7 +269,7 @@ const logout = () => {
 
 @media (max-width: 768px) {
   .top-bar-inner, .nav-bar-inner { padding: 0 16px; }
-  .logo-text { display: none; }
+  .logo-img { height: 28px; }
   .nav-menu :deep(.el-menu-item span),
   .nav-menu :deep(.el-sub-menu__title span) { display: none; }
   .main-content { padding: 16px; }

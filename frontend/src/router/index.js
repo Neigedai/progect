@@ -12,6 +12,11 @@ const routes = [
     component: () => import('@/views/Dashboard.vue')
   },
   {
+    path: '/survey/:code',
+    name: 'SurveyFill',
+    component: () => import('@/views/SurveyFill.vue')
+  },
+  {
     path: '/',
     component: () => import('@/layout/MainLayout.vue'),
     children: [
@@ -103,6 +108,11 @@ const routes = [
         path: 'admin/users',
         name: 'UserManage',
         component: () => import('@/views/UserManage.vue')
+      },
+      {
+        path: 'admin/survey',
+        name: 'SurveyManage',
+        component: () => import('@/views/SurveyManage.vue')
       },
       {
         path: 'articles',

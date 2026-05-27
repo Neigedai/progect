@@ -16,12 +16,12 @@
         <el-form-item label="法人联系电话" prop="legalPersonPhone">
           <el-input v-model="form.legalPersonPhone" disabled />
         </el-form-item>
-        <el-form-item label="身份证正面" prop="legalPersonIdFront">
-          <el-input v-model="form.legalPersonIdFront" placeholder="上传身份证正面" />
+        <el-form-item label="法人身份证正面" prop="legalPersonIdFront">
+          <el-input v-model="form.legalPersonIdFront" placeholder="上传法人身份证正面" />
           <upload-btn @uploaded="url => form.legalPersonIdFront = url" />
         </el-form-item>
-        <el-form-item label="身份证反面" prop="legalPersonIdBack">
-          <el-input v-model="form.legalPersonIdBack" placeholder="上传身份证反面" />
+        <el-form-item label="法人身份证反面" prop="legalPersonIdBack">
+          <el-input v-model="form.legalPersonIdBack" placeholder="上传法人身份证反面" />
           <upload-btn @uploaded="url => form.legalPersonIdBack = url" />
         </el-form-item>
         <el-form-item label="面积需求" prop="area">
@@ -82,6 +82,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="提交时间" min-width="160" />
+        <el-table-column label="审核意见" min-width="180">
+          <template #default="{ row }">
+            <span v-if="row.status === 'rejected' && row.reviewComment" style="color:#f56c6c">{{ row.reviewComment }}</span>
+            <span v-else-if="row.status === 'approved' && row.reviewComment" style="color:#67c23a">{{ row.reviewComment }}</span>
+            <span v-else style="color:#909399">-</span>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
   </div>
@@ -140,6 +147,7 @@ const handleSubmit = async () => {
   try {
     await submitResidencyApplication({ ...form })
     ElMessage.success('入驻申请已提交')
+    showForm.value = false
     form.area = ''
     form.industryType = ''
     form.expectedEntryDate = ''

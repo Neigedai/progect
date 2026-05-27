@@ -20,7 +20,7 @@ export function useAuth() {
   const loadAuth = async () => {
     try {
       const { default: request } = await import('@/utils/request')
-      const res = await request.get('/auth/me')
+      const res = await request.get('/auth/me', { silent: true })
       if (res.code === 200) {
         state.user = res.data.user
         state.roles = res.data.roles || []

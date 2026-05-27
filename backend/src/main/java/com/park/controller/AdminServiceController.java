@@ -118,6 +118,9 @@ public class AdminServiceController {
         wrapper.orderByDesc(ServiceApplication::getCreateTime);
         Page<ServiceApplication> result = serviceApplicationMapper.selectPage(new Page<>(page, size), wrapper);
 
+        List<Long> userIds = result.getRecords().stream().map(ServiceApplication::getUserId).distinct().toList();
+        Map<Long, String> userMap = userMapper.selectList(new LambdaQueryWrapper<User>().in(User::getId, userIds))
+                .stream().collect(Collectors.toMap(User::getId, User::getUsername));
         List<Map<String, Object>> records = result.getRecords().stream().map(app -> {
             Map<String, Object> map = new java.util.LinkedHashMap<>();
             map.put("id", app.getId());
@@ -128,8 +131,7 @@ public class AdminServiceController {
             map.put("contactPhone", app.getContactPhone());
             map.put("status", app.getStatus());
             map.put("createTime", app.getCreateTime());
-            User user = userMapper.selectById(app.getUserId());
-            map.put("username", user != null ? user.getUsername() : "");
+            map.put("username", userMap.getOrDefault(app.getUserId(), ""));
             return map;
         }).collect(Collectors.toList());
 

@@ -82,6 +82,9 @@
         <el-descriptions-item label="预计入驻时间">{{ detail.expectedEntryDate }}</el-descriptions-item>
         <el-descriptions-item label="提交时间">{{ detail.createTime }}</el-descriptions-item>
         <el-descriptions-item label="其他信息" :span="2">{{ detail.additionalInfo || '-' }}</el-descriptions-item>
+        <el-descriptions-item v-if="detail.reviewComment" label="审核意见" :span="2">
+          <span :style="{ color: detail.status === 'rejected' ? '#f56c6c' : '#67c23a', fontWeight: 500 }">{{ detail.reviewComment }}</span>
+        </el-descriptions-item>
         <el-descriptions-item label="身份证正面" :span="2">
           <el-image v-if="detail.legalPersonIdFront" :src="detail.legalPersonIdFront" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdFront]" preview-teleported />
           <span v-else>-</span>

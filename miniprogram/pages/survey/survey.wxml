@@ -1,0 +1,61 @@
+<view class="survey-page">
+  <view class="survey-header">
+    <text class="survey-title">{{year}}年度网易沈阳数字产业中心入驻企业满意度调查表</text>
+    <text class="survey-desc">尊敬的客户：非常感谢您对网易沈阳数字产业中心的支持与信任，为了更好的为您提供创业环境及科技服务，希望能收到您的宝贵意见与真实想法，进而提升中心的服务能力，同时为您提供更舒适的办公环境。感谢您的合作！</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="status-text">加载中...</view>
+  <view wx:elif="{{error}}" class="status-text" style="color:#f56c6c">{{error}}</view>
+  <view wx:elif="{{submitted}}" class="status-text" style="color:#67c23a">
+    <text style="font-size:48rpx">✓</text>
+    <text style="display:block;margin-top:16rpx">提交成功，感谢您的反馈！</text>
+  </view>
+
+  <view wx:else class="form-card">
+    <view class="section-title">客户信息</view>
+    <view class="form-group">
+      <text class="label">入驻企业名称</text>
+      <input value="{{form.companyName}}" placeholder="请输入" data-field="companyName" bindinput="onInput"/>
+    </view>
+    <view class="form-group">
+      <text class="label">所属领域</text>
+      <input value="{{form.industry}}" placeholder="如：信息技术" data-field="industry" bindinput="onInput"/>
+    </view>
+    <view class="form-group">
+      <text class="label">企业人数</text>
+      <input value="{{form.employeeCount}}" type="number" placeholder="请输入" data-field="employeeCount" bindinput="onInput"/>
+    </view>
+    <view class="form-group">
+      <text class="label">联系人</text>
+      <input value="{{form.contactName}}" placeholder="请输入" data-field="contactName" bindinput="onInput"/>
+    </view>
+    <view class="form-group">
+      <text class="label">联系电话</text>
+      <input value="{{form.contactPhone}}" type="number" maxlength="11" placeholder="请输入" data-field="contactPhone" bindinput="onInput"/>
+    </view>
+
+    <block wx:for="{{questions}}" wx:key="index">
+      <view class="section-title">{{item.section}}</view>
+      <block wx:for="{{item.items}}" wx:for-item="q" wx:key="key">
+        <view class="q-item">
+          <text class="q-text">{{q.label}}</text>
+          <view class="q-options">
+            <view
+              wx:for="{{q.options}}" wx:for-item="opt" wx:key="*this"
+              class="q-opt {{form[q.key] === opt ? 'active' : ''}}"
+              data-key="{{q.key}}" data-val="{{opt}}" bindtap="onSelect"
+            >{{opt}}分</view>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <view class="section-title">四、其它</view>
+    <view class="form-group">
+      <text class="label">11、如何能增进您对我们服务基地服务的满意度？</text>
+      <textarea value="{{form.q11}}" placeholder="请输入您的建议" data-field="q11" bindinput="onInput"/>
+    </view>
+
+    <view class="submit-btn" bindtap="handleSubmit">提交问卷</view>
+  </view>
+</view>

@@ -12,7 +12,7 @@
     </div>
 
     <div class="welcome-section">
-      <h1 class="welcome-title">园区服务运营系统</h1>
+      <h1 class="welcome-title">米库产业创新公共服务平台</h1>
       <p class="welcome-desc">一站式园区服务管理平台，助力园区数字化转型</p>
     </div>
 

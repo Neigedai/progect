@@ -28,12 +28,14 @@
     </el-card>
 
     <template v-else>
-      <el-card v-if="approvedResidency && !imported" class="import-card">
-        <div class="import-notice">
-          <el-icon :size="24" color="#165DFF"><InfoFilled /></el-icon>
-          <span>检测到您有已通过的入驻申请（法人：{{ approvedResidency.legalPersonName }}），可快捷带入基本信息</span>
+      <el-card v-if="approvedResidencyList.length > 0 && !imported" class="import-card">
+        <div class="import-banner">
+          <div class="import-banner-left">
+            <el-icon :size="22" color="#165DFF"><InfoFilled /></el-icon>
+            <span>检测到您有 {{ approvedResidencyList.length }} 条已通过的入驻申请，可快捷带入基本信息</span>
+          </div>
+          <el-button type="primary" size="small" @click="importDialogVisible = true">导入信息</el-button>
         </div>
-        <el-button type="primary" @click="doImport">导入信息</el-button>
       </el-card>
 
       <el-card>
@@ -76,15 +78,23 @@
             <div v-if="form.licenseUrl" style="text-align:center;margin-bottom:18px">
               <el-image :src="form.licenseUrl" style="width:200px;height:130px;border-radius:4px;border:1px solid #eee" fit="contain" :preview-src-list="[form.licenseUrl]" preview-teleported />
             </div>
-            <el-form-item label="法人身份证" required>
+            <el-form-item label="法人身份证正面" required>
               <template v-if="!imported">
-                <UploadBtn v-model="form.legalPersonIdUrl" text="上传法人身份证" />
-                <div style="color: #999; font-size: 12px; margin-top: 4px">支持 JPG/PNG，最大 5MB</div>
+                <UploadBtn v-model="form.legalPersonIdUrl" text="上传法人身份证正面" />
               </template>
               <span v-else style="color:#999;font-size:12px">已从入驻申请导入</span>
             </el-form-item>
             <div v-if="form.legalPersonIdUrl" style="text-align:center;margin-bottom:18px">
               <el-image :src="form.legalPersonIdUrl" style="width:200px;height:130px;border-radius:4px;border:1px solid #eee" fit="contain" :preview-src-list="[form.legalPersonIdUrl]" preview-teleported />
+            </div>
+            <el-form-item label="法人身份证反面" required>
+              <template v-if="!imported">
+                <UploadBtn v-model="form.legalPersonIdBackUrl" text="上传法人身份证反面" />
+              </template>
+              <span v-else style="color:#999;font-size:12px">已从入驻申请导入</span>
+            </el-form-item>
+            <div v-if="form.legalPersonIdBackUrl" style="text-align:center;margin-bottom:18px">
+              <el-image :src="form.legalPersonIdBackUrl" style="width:200px;height:130px;border-radius:4px;border:1px solid #eee" fit="contain" :preview-src-list="[form.legalPersonIdBackUrl]" preview-teleported />
             </div>
             <div style="text-align:center">
               <el-button @click="step--">上一步</el-button>
@@ -106,8 +116,12 @@
               <el-image v-if="form.licenseUrl" :src="form.licenseUrl" style="width:120px;height:80px" fit="contain" />
               <span v-else style="color:#999">未上传</span>
             </el-descriptions-item>
-            <el-descriptions-item label="法人身份证">
+            <el-descriptions-item label="法人身份证正面">
               <el-image v-if="form.legalPersonIdUrl" :src="form.legalPersonIdUrl" style="width:120px;height:80px" fit="contain" />
+              <span v-else style="color:#999">未上传</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="法人身份证反面">
+              <el-image v-if="form.legalPersonIdBackUrl" :src="form.legalPersonIdBackUrl" style="width:120px;height:80px" fit="contain" />
               <span v-else style="color:#999">未上传</span>
             </el-descriptions-item>
           </el-descriptions>
@@ -118,6 +132,25 @@
         </div>
       </el-card>
     </template>
+
+    <el-dialog v-model="importDialogVisible" title="选择导入的入驻申请" width="800px">
+      <el-table :data="approvedResidencyList" highlight-current-row @row-click="row => selectedResidency = row">
+        <el-table-column width="50">
+          <template #default="{ row }">
+            <el-radio v-model="selectedResidency" :value="row" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="legalPersonName" label="法人姓名" width="100" />
+        <el-table-column prop="legalPersonPhone" label="法人电话" width="130" />
+        <el-table-column prop="area" label="面积需求" width="110" />
+        <el-table-column prop="industryType" label="行业类型" width="100" />
+        <el-table-column prop="createTime" label="提交时间" min-width="160" />
+      </el-table>
+      <template #footer>
+        <el-button @click="importDialogVisible = false">取消</el-button>
+        <el-button type="primary" :disabled="!selectedResidency" @click="confirmImport">确定导入</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,8 +167,10 @@ const step = ref(0)
 const submitting = ref(false)
 const authData = ref(null)
 const basicFormRef = ref(null)
-const approvedResidency = ref(null)
+const approvedResidencyList = ref([])
 const imported = ref(false)
+const importDialogVisible = ref(false)
+const selectedResidency = ref(null)
 
 const form = reactive({
   companyName: '',
@@ -143,6 +178,7 @@ const form = reactive({
   contactPhone: '',
   licenseUrl: '',
   legalPersonIdUrl: '',
+  legalPersonIdBackUrl: '',
   legalFaceVerified: false
 })
 
@@ -153,6 +189,7 @@ const basicRules = {
     { pattern: /^[0-9A-Z]{18}$/, message: '请输入正确的18位信用代码', trigger: 'blur' }
   ],
   contactPhone: [
+    { required: true, message: '请输入联系人手机号', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
   ]
 }
@@ -168,12 +205,14 @@ const nextStep = async () => {
   step.value++
 }
 
-const doImport = () => {
-  const r = approvedResidency.value
+const confirmImport = () => {
+  const r = selectedResidency.value
   if (!r) return
   form.contactPhone = r.legalPersonPhone || ''
   form.legalPersonIdUrl = r.legalPersonIdFront || ''
+  form.legalPersonIdBackUrl = r.legalPersonIdBack || ''
   imported.value = true
+  importDialogVisible.value = false
 }
 
 const handleSubmit = async () => {
@@ -201,9 +240,9 @@ onMounted(async () => {
   } catch {}
   if (!authData.value) {
     try {
-      const res = await getMyApplications({ page: 1, size: 50 })
-      const approved = (res.data.records || []).find(r => r.status === 'approved')
-      if (approved) approvedResidency.value = approved
+      const res = await getMyApplications({ page: 1, size: 50 }, { silent: true })
+      const approved = (res.data.records || []).filter(r => r.status === 'approved')
+      if (approved.length > 0) approvedResidencyList.value = approved
     } catch {}
   }
 })
@@ -226,16 +265,21 @@ onMounted(async () => {
 }
 .import-card {
   border-radius: var(--radius-lg);
-  border-color: var(--primary);
-  background: var(--primary-light);
+  border-left: 4px solid #165DFF;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e8f0fe 100%);
   margin-bottom: 16px;
 }
-.import-notice {
+.import-banner {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 16px;
+}
+.import-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 14px;
-  color: var(--text-primary);
-  margin-bottom: 12px;
+  color: #1d2129;
 }
 </style>

@@ -4,8 +4,8 @@ export function submitResidencyApplication(data) {
   return request.post('/residency/applications', data)
 }
 
-export function getMyApplications(params) {
-  return request.get('/residency/applications/my', { params })
+export function getMyApplications(params, config) {
+  return request.get('/residency/applications/my', { params, ...config })
 }
 
 export function getResidencyApplications(params) {

@@ -20,7 +20,7 @@ const emit = defineEmits(['update:modelValue', 'uploaded'])
 
 const fileInput = ref(null)
 
-const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv']
+const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv']
 const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg']
 
 const handleFile = async (e) => {

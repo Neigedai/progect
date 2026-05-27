@@ -24,11 +24,17 @@ request.interceptors.response.use(
     return res
   },
   error => {
-    const msg = error.response?.data?.message || '网络错误'
-    ElMessage.error(msg)
-    if (error.response?.status === 401 && window.location.pathname !== '/login') {
+    const silent = error.config?.silent
+    const status = error.response?.status
+    if ((status === 401 || status === 403) && window.location.pathname !== '/login') {
+      if (!silent) ElMessage.error('请先登录')
       localStorage.removeItem('token')
       window.location.href = '/login'
+      return Promise.reject(error)
+    }
+    if (!silent) {
+      const msg = error.response?.data?.message || '网络错误'
+      ElMessage.error(msg)
     }
     return Promise.reject(error)
   }

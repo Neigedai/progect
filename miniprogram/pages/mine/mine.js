@@ -33,7 +33,7 @@ Page({
 
   handleAbout() {
     wx.showModal({
-      title: '园区服务运营系统',
+      title: '米库产业创新公共服务平台',
       content: '为企业提供一站式园区服务，包括政策申报、财税代办、法律咨询、人力资源、知识产权等全方位支持。',
       showCancel: false
     })

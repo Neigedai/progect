@@ -41,9 +41,15 @@
             <span v-else style="color:#999">-</span>
           </template>
         </el-table-column>
-        <el-table-column label="法人身份证" width="90" align="center">
+        <el-table-column label="法人身份证正面" width="100" align="center">
           <template #default="{ row }">
             <el-image v-if="row.legalPersonIdUrl" :src="row.legalPersonIdUrl" style="width:60px;height:40px" fit="contain" :preview-src-list="[row.legalPersonIdUrl]" preview-teleported />
+            <span v-else style="color:#999">-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法人身份证反面" width="100" align="center">
+          <template #default="{ row }">
+            <el-image v-if="row.legalPersonIdBackUrl" :src="row.legalPersonIdBackUrl" style="width:60px;height:40px" fit="contain" :preview-src-list="[row.legalPersonIdBackUrl]" preview-teleported />
             <span v-else style="color:#999">-</span>
           </template>
         </el-table-column>
@@ -96,8 +102,12 @@
           <el-image v-if="detail.licenseUrl" :src="detail.licenseUrl" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.licenseUrl]" preview-teleported />
           <span v-else>-</span>
         </el-descriptions-item>
-        <el-descriptions-item label="法人身份证" :span="2">
+        <el-descriptions-item label="法人身份证正面" :span="2">
           <el-image v-if="detail.legalPersonIdUrl" :src="detail.legalPersonIdUrl" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdUrl]" preview-teleported />
+          <span v-else>-</span>
+        </el-descriptions-item>
+        <el-descriptions-item label="法人身份证反面" :span="2">
+          <el-image v-if="detail.legalPersonIdBackUrl" :src="detail.legalPersonIdBackUrl" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdBackUrl]" preview-teleported />
           <span v-else>-</span>
         </el-descriptions-item>
         <el-descriptions-item label="状态">
