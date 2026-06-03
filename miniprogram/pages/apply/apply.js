@@ -1,11 +1,46 @@
 const { submitResidency, getMe, getMyResidency } = require('../../utils/api')
 const { upload } = require('../../utils/request')
 
+const locations = [
+  '沈阳市皇姑区（网易沈阳数字产业中心）',
+  '沈阳市自贸区',
+  '沈阳市沈河区（马官桥街道办事处）',
+  '沈阳市浑南区',
+  '沈阳市铁西区',
+  '沈阳市沈北新区',
+  '辽阳市文圣区（网易辽阳联合创新中心）',
+  '锦州市滨海新区'
+]
+const enterpriseTypes = ['科技类', '游戏动漫类', '电商贸易类', '咨询服务及其他']
+const tracksMap = {
+  0: ['硬科技', '数智科技', '消费升级', '航空低空', '生物医药', '新材料', '新能源', '其他'],
+  1: ['游戏开发', '游戏制作', '动漫制作', '动漫原创', '赛事活动', '技术服务', '其他'],
+  2: ['跨境电商', '国内电商', '传统贸易', '供应链', '技术服务', '其他'],
+  3: ['建筑工程', '咨询服务', '人力派遣', '生产制造', '技术服务', '其他']
+}
+
 Page({
   data: {
-    industries: ['信息技术', '生物医药', '智能制造', '新材料', '新能源', '现代服务', '文化创意', '其他'],
-    industryIdx: -1,
-    form: { legalPersonName: '', legalPersonPhone: '', legalPersonIdFront: '', legalPersonIdBack: '', area: '', industryType: '', expectedEntryDate: '', additionalInfo: '' },
+    locations,
+    enterpriseTypes,
+    enterpriseTracks: [],
+    locationIdx: -1,
+    enterpriseTypeIdx: -1,
+    enterpriseTrackIdx: -1,
+    form: {
+      location: '',
+      companyName: '',
+      businessLicenseUrl: '',
+      legalPersonName: '',
+      legalPersonPhone: '',
+      legalPersonIdFront: '',
+      legalPersonIdBack: '',
+      emergencyContactName: '',
+      emergencyContactPhone: '',
+      enterpriseType: null,
+      enterpriseTrack: '',
+      agreed: false
+    },
     myList: [],
     showForm: false
   },
@@ -37,20 +72,40 @@ Page({
     this.setData({ ['form.' + field]: e.detail.value })
   },
 
-  onIndustryChange(e) {
+  onLocationChange(e) {
     const idx = e.detail.value
-    this.setData({ industryIdx: idx, ['form.industryType']: this.data.industries[idx] })
+    this.setData({ locationIdx: idx, ['form.location']: locations[idx] })
   },
 
-  onDateChange(e) {
-    this.setData({ ['form.expectedEntryDate']: e.detail.value })
+  onEnterpriseTypeChange(e) {
+    const idx = e.detail.value
+    const type = idx + 1
+    this.setData({
+      enterpriseTypeIdx: idx,
+      enterpriseTracks: tracksMap[idx] || [],
+      enterpriseTrackIdx: -1,
+      ['form.enterpriseType']: type,
+      ['form.enterpriseTrack']: ''
+    })
+  },
+
+  onEnterpriseTrackChange(e) {
+    const idx = e.detail.value
+    this.setData({
+      enterpriseTrackIdx: idx,
+      ['form.enterpriseTrack']: this.data.enterpriseTracks[idx]
+    })
   },
 
   onNewApply() {
     this.setData({ showForm: true })
   },
 
-  chooseIdFront() {
+  toggleAgree() {
+    this.setData({ ['form.agreed']: !this.data.form.agreed })
+  },
+
+  uploadFile(cb) {
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
@@ -59,50 +114,60 @@ Page({
         const filePath = res.tempFilePaths[0]
         wx.showLoading({ title: '上传中...' })
         upload('/admin/upload/image', filePath)
-          .then(result => {
-            this.setData({ ['form.legalPersonIdFront']: result.data.url })
-          })
+          .then(result => { cb(result.data.url) })
           .catch(() => wx.showToast({ title: '上传失败', icon: 'none' }))
           .finally(() => wx.hideLoading())
       }
     })
   },
 
+  chooseLicense() {
+    this.uploadFile(url => this.setData({ ['form.businessLicenseUrl']: url }))
+  },
+
+  chooseIdFront() {
+    this.uploadFile(url => this.setData({ ['form.legalPersonIdFront']: url }))
+  },
+
   chooseIdBack() {
-    wx.chooseImage({
-      count: 1,
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera'],
-      success: res => {
-        const filePath = res.tempFilePaths[0]
-        wx.showLoading({ title: '上传中...' })
-        upload('/admin/upload/image', filePath)
-          .then(result => {
-            this.setData({ ['form.legalPersonIdBack']: result.data.url })
-          })
-          .catch(() => wx.showToast({ title: '上传失败', icon: 'none' }))
-          .finally(() => wx.hideLoading())
-      }
-    })
+    this.uploadFile(url => this.setData({ ['form.legalPersonIdBack']: url }))
   },
 
   async handleSubmit() {
     const f = this.data.form
+    if (!f.location) { wx.showToast({ title: '请选择入驻地点', icon: 'none' }); return }
+    if (!f.companyName) { wx.showToast({ title: '请输入企业名称', icon: 'none' }); return }
     if (!f.legalPersonName) { wx.showToast({ title: '请输入法人姓名', icon: 'none' }); return }
     if (!/^1[3-9]\d{9}$/.test(f.legalPersonPhone)) { wx.showToast({ title: '手机号格式不正确', icon: 'none' }); return }
-    if (!f.area) { wx.showToast({ title: '请输入面积需求', icon: 'none' }); return }
-    if (!f.industryType) { wx.showToast({ title: '请选择行业类型', icon: 'none' }); return }
+    if (!f.emergencyContactName) { wx.showToast({ title: '请输入应急联系人姓名', icon: 'none' }); return }
+    if (!/^1[3-9]\d{9}$/.test(f.emergencyContactPhone)) { wx.showToast({ title: '应急联系人手机号不正确', icon: 'none' }); return }
+    if (f.enterpriseType === null) { wx.showToast({ title: '请选择企业类型', icon: 'none' }); return }
+    if (!f.enterpriseTrack) { wx.showToast({ title: '请选择企业赛道', icon: 'none' }); return }
+    if (!f.agreed) { wx.showToast({ title: '请阅读并同意申请承诺', icon: 'none' }); return }
     try {
-      await submitResidency(f)
+      const data = { ...f, agreed: undefined }
+      await submitResidency(data)
       wx.showToast({ title: '提交成功', icon: 'success' })
       this.setData({
-        industryIdx: -1,
+        locationIdx: -1,
+        enterpriseTypeIdx: -1,
+        enterpriseTrackIdx: -1,
+        enterpriseTracks: [],
         form: {
-          legalPersonName: this.data.form.legalPersonName,
-          legalPersonPhone: this.data.form.legalPersonPhone,
-          legalPersonIdFront: '', legalPersonIdBack: '',
-          area: '', industryType: '', expectedEntryDate: '', additionalInfo: ''
-        }
+          location: '',
+          companyName: '',
+          businessLicenseUrl: '',
+          legalPersonName: f.legalPersonName,
+          legalPersonPhone: f.legalPersonPhone,
+          legalPersonIdFront: '',
+          legalPersonIdBack: '',
+          emergencyContactName: '',
+          emergencyContactPhone: '',
+          enterpriseType: null,
+          enterpriseTrack: '',
+          agreed: false
+        },
+        showForm: false
       })
       this.fetchMyList()
     } catch (e) { /* */ }

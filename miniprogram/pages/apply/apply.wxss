@@ -54,3 +54,12 @@
 .status-pending { color: #E6A23C; background: #FDF6EC; }
 .status-ok { color: #67C23A; background: #F0F9EB; }
 .status-no { color: #F56C6C; background: #FEF0F0; }
+.agree-row { display: flex; align-items: flex-start; gap: 16rpx; padding: 16rpx 0; }
+.agree-check {
+  width: 36rpx; height: 36rpx; min-width: 36rpx; border: 2rpx solid #ccc; border-radius: 6rpx;
+  display: flex; align-items: center; justify-content: center; margin-top: 4rpx;
+}
+.agree-check.checked { background: #165DFF; border-color: #165DFF; }
+.check-icon { color: #fff; font-size: 24rpx; }
+.agree-text { font-size: 24rpx; color: #666; line-height: 1.6; }
+.reject-reason { font-size: 24rpx; color: #F56C6C; margin-top: 8rpx; }

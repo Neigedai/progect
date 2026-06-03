@@ -9,53 +9,110 @@
           </el-breadcrumb>
         </div>
       </template>
-      <el-form v-if="showForm" ref="formRef" :model="form" :rules="rules" label-width="130px" style="max-width:640px">
+      <el-form v-if="showForm" ref="formRef" :model="form" :rules="rules" label-width="140px" style="max-width:640px">
+        <el-form-item label="入驻地点" prop="location">
+          <el-select v-model="form.location" placeholder="请选择入驻地点" style="width:100%">
+            <el-option label="沈阳市皇姑区（网易沈阳数字产业中心）" value="沈阳市皇姑区（网易沈阳数字产业中心）" />
+            <el-option label="沈阳市自贸区" value="沈阳市自贸区" />
+            <el-option label="沈阳市沈河区（马官桥街道办事处）" value="沈阳市沈河区（马官桥街道办事处）" />
+            <el-option label="沈阳市浑南区" value="沈阳市浑南区" />
+            <el-option label="沈阳市铁西区" value="沈阳市铁西区" />
+            <el-option label="沈阳市沈北新区" value="沈阳市沈北新区" />
+            <el-option label="辽阳市文圣区（网易辽阳联合创新中心）" value="辽阳市文圣区（网易辽阳联合创新中心）" />
+            <el-option label="锦州市滨海新区" value="锦州市滨海新区" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="企业名称" prop="companyName">
+          <el-input v-model="form.companyName" placeholder="请输入企业全称" />
+        </el-form-item>
+
+        <el-form-item label="营业执照" prop="businessLicenseUrl">
+          <el-input v-model="form.businessLicenseUrl" placeholder="上传营业执照" readonly />
+          <upload-btn @uploaded="url => form.businessLicenseUrl = url" />
+        </el-form-item>
+
         <el-form-item label="法人姓名" prop="legalPersonName">
           <el-input v-model="form.legalPersonName" placeholder="请输入法人姓名" />
         </el-form-item>
-        <el-form-item label="法人联系电话" prop="legalPersonPhone">
+
+        <el-form-item label="本人手机号" prop="legalPersonPhone">
           <el-input v-model="form.legalPersonPhone" disabled />
         </el-form-item>
+
         <el-form-item label="法人身份证正面" prop="legalPersonIdFront">
-          <el-input v-model="form.legalPersonIdFront" placeholder="上传法人身份证正面" />
+          <el-input v-model="form.legalPersonIdFront" placeholder="上传法人身份证正面" readonly />
           <upload-btn @uploaded="url => form.legalPersonIdFront = url" />
         </el-form-item>
+
         <el-form-item label="法人身份证反面" prop="legalPersonIdBack">
-          <el-input v-model="form.legalPersonIdBack" placeholder="上传法人身份证反面" />
+          <el-input v-model="form.legalPersonIdBack" placeholder="上传法人身份证反面" readonly />
           <upload-btn @uploaded="url => form.legalPersonIdBack = url" />
         </el-form-item>
-        <el-form-item label="面积需求" prop="area">
-          <el-input v-model="form.area" placeholder="如：200-500㎡" />
+
+        <el-form-item label="应急联系人" prop="emergencyContactName">
+          <el-input v-model="form.emergencyContactName" placeholder="请输入应急联系人姓名" />
         </el-form-item>
-        <el-form-item label="行业类型" prop="industryType">
-          <el-select v-model="form.industryType" placeholder="请选择行业类型" style="width:100%">
-            <el-option label="信息技术" value="信息技术" />
-            <el-option label="生物医药" value="生物医药" />
-            <el-option label="智能制造" value="智能制造" />
-            <el-option label="新材料" value="新材料" />
-            <el-option label="新能源" value="新能源" />
-            <el-option label="现代服务" value="现代服务" />
-            <el-option label="文化创意" value="文化创意" />
-            <el-option label="其他" value="其他" />
+
+        <el-form-item label="应急联系人手机号" prop="emergencyContactPhone">
+          <el-input v-model="form.emergencyContactPhone" placeholder="请输入应急联系人手机号" maxlength="11" />
+        </el-form-item>
+
+        <el-form-item label="企业类型" prop="enterpriseType">
+          <el-radio-group v-model="form.enterpriseType" @change="onEnterpriseTypeChange">
+            <el-radio :value="1">科技类</el-radio>
+            <el-radio :value="2">游戏动漫类</el-radio>
+            <el-radio :value="3">电商贸易类</el-radio>
+            <el-radio :value="4">咨询服务及其他</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="企业赛道" prop="enterpriseTrack">
+          <el-select v-model="form.enterpriseTrack" placeholder="请选择企业赛道" style="width:100%">
+            <template v-if="form.enterpriseType === 1">
+              <el-option label="硬科技" value="硬科技" />
+              <el-option label="数智科技" value="数智科技" />
+              <el-option label="消费升级" value="消费升级" />
+              <el-option label="航空低空" value="航空低空" />
+              <el-option label="生物医药" value="生物医药" />
+              <el-option label="新材料" value="新材料" />
+              <el-option label="新能源" value="新能源" />
+              <el-option label="其他" value="其他" />
+            </template>
+            <template v-else-if="form.enterpriseType === 2">
+              <el-option label="游戏开发" value="游戏开发" />
+              <el-option label="游戏制作" value="游戏制作" />
+              <el-option label="动漫制作" value="动漫制作" />
+              <el-option label="动漫原创" value="动漫原创" />
+              <el-option label="赛事活动" value="赛事活动" />
+              <el-option label="技术服务" value="技术服务" />
+              <el-option label="其他" value="其他" />
+            </template>
+            <template v-else-if="form.enterpriseType === 3">
+              <el-option label="跨境电商" value="跨境电商" />
+              <el-option label="国内电商" value="国内电商" />
+              <el-option label="传统贸易" value="传统贸易" />
+              <el-option label="供应链" value="供应链" />
+              <el-option label="技术服务" value="技术服务" />
+              <el-option label="其他" value="其他" />
+            </template>
+            <template v-else-if="form.enterpriseType === 4">
+              <el-option label="建筑工程" value="建筑工程" />
+              <el-option label="咨询服务" value="咨询服务" />
+              <el-option label="人力派遣" value="人力派遣" />
+              <el-option label="生产制造" value="生产制造" />
+              <el-option label="技术服务" value="技术服务" />
+              <el-option label="其他" value="其他" />
+            </template>
           </el-select>
         </el-form-item>
-        <el-form-item label="预计入驻时间" prop="expectedEntryDate">
-          <el-date-picker
-            v-model="form.expectedEntryDate"
-            type="date"
-            placeholder="请选择日期"
-            value-format="YYYY-MM-DD"
-            style="width:100%"
-          />
+
+        <el-form-item prop="agreed">
+          <el-checkbox v-model="form.agreed">
+            本人自愿申请入驻，并知悉上述企业开办流程及法律规定，以上信息均真实有效，特此承诺！
+          </el-checkbox>
         </el-form-item>
-        <el-form-item label="其他信息" prop="additionalInfo">
-          <el-input
-            v-model="form.additionalInfo"
-            type="textarea"
-            :rows="4"
-            placeholder="补充说明（选填）"
-          />
-        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" :loading="submitting" @click="handleSubmit">提交申请</el-button>
           <el-button @click="$router.back()">返回</el-button>
@@ -71,9 +128,13 @@
       <template #header><h3>我的申请记录</h3></template>
       <el-table :data="myList" stripe>
         <el-table-column prop="id" label="编号" width="70" />
-        <el-table-column prop="industryType" label="行业类型" width="110" />
-        <el-table-column prop="area" label="面积需求" width="110" />
-        <el-table-column prop="expectedEntryDate" label="预计入驻" width="120" />
+        <el-table-column prop="companyName" label="企业名称" width="150" />
+        <el-table-column label="企业类型" width="110">
+          <template #default="{ row }">
+            {{ enterpriseTypeLabel(row.enterpriseType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="enterpriseTrack" label="赛道" width="100" />
         <el-table-column label="状态" width="90">
           <template #default="{ row }">
             <el-tag :type="row.status === 'approved' ? 'success' : row.status === 'rejected' ? 'danger' : 'warning'" size="small">
@@ -81,14 +142,13 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="提交时间" min-width="160" />
-        <el-table-column label="审核意见" min-width="180">
+        <el-table-column label="驳回原因" width="160">
           <template #default="{ row }">
-            <span v-if="row.status === 'rejected' && row.reviewComment" style="color:#f56c6c">{{ row.reviewComment }}</span>
-            <span v-else-if="row.status === 'approved' && row.reviewComment" style="color:#67c23a">{{ row.reviewComment }}</span>
-            <span v-else style="color:#909399">-</span>
+            <span v-if="row.status === 'rejected'" :style="{ color: '#f56c6c', fontWeight: 500 }">{{ row.reviewComment || '-' }}</span>
+            <span v-else :style="{ color: '#67c23a' }">{{ row.reviewComment || '-' }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="createTime" label="提交时间" min-width="160" />
       </el-table>
     </el-card>
   </div>
@@ -110,29 +170,54 @@ const myList = ref([])
 const showForm = ref(false)
 
 const form = reactive({
+  location: '',
+  companyName: '',
+  businessLicenseUrl: '',
   legalPersonName: auth.user?.nickname || auth.user?.username || '',
   legalPersonPhone: auth.user?.phone || '',
   legalPersonIdFront: '',
   legalPersonIdBack: '',
-  area: '',
-  industryType: '',
-  expectedEntryDate: '',
-  additionalInfo: ''
+  emergencyContactName: '',
+  emergencyContactPhone: '',
+  enterpriseType: null,
+  enterpriseTrack: '',
+  agreed: false
 })
 
+const enterpriseTypeLabels = { 1: '科技类', 2: '游戏动漫类', 3: '电商贸易类', 4: '咨询服务及其他' }
+const enterpriseTypeLabel = (v) => enterpriseTypeLabels[v] || ''
+
 const rules = {
+  location: [{ required: true, message: '请选择入驻地点', trigger: 'change' }],
+  companyName: [{ required: true, message: '请输入企业名称', trigger: 'blur' }],
   legalPersonName: [{ required: true, message: '请输入法人姓名', trigger: 'blur' }],
   legalPersonPhone: [
     { required: true, message: '请输入法人联系电话', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
   ],
-  area: [{ required: true, message: '请输入面积需求', trigger: 'blur' }],
-  industryType: [{ required: true, message: '请选择行业类型', trigger: 'change' }]
+  emergencyContactName: [{ required: true, message: '请输入应急联系人姓名', trigger: 'blur' }],
+  emergencyContactPhone: [
+    { required: true, message: '请输入应急联系人手机号', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+  ],
+  enterpriseType: [{ required: true, message: '请选择企业类型', trigger: 'change' }],
+  enterpriseTrack: [{ required: true, message: '请选择企业赛道', trigger: 'change' }],
+  agreed: [{
+    validator: (rule, value, callback) => {
+      if (!value) callback(new Error('请阅读并同意申请承诺'))
+      else callback()
+    },
+    trigger: 'change'
+  }]
+}
+
+const onEnterpriseTypeChange = () => {
+  form.enterpriseTrack = ''
 }
 
 const fetchMyList = async () => {
   try {
-    const res = await getMyApplications({ page: 1, size: 50 })
+    const res = await getMyApplications({ page: 1, size: 50 }, { silent: true })
     myList.value = res.data.records || []
   } catch { /* */ }
 }
@@ -145,15 +230,19 @@ const handleSubmit = async () => {
   }
   submitting.value = true
   try {
-    await submitResidencyApplication({ ...form })
+    await submitResidencyApplication({ ...form, agreed: undefined })
     ElMessage.success('入驻申请已提交')
     showForm.value = false
-    form.area = ''
-    form.industryType = ''
-    form.expectedEntryDate = ''
-    form.additionalInfo = ''
+    form.companyName = ''
+    form.businessLicenseUrl = ''
     form.legalPersonIdFront = ''
     form.legalPersonIdBack = ''
+    form.emergencyContactName = ''
+    form.emergencyContactPhone = ''
+    form.enterpriseType = null
+    form.enterpriseTrack = ''
+    form.agreed = false
+    form.location = ''
     fetchMyList()
   } catch {
     ElMessage.error('提交失败，请稍后重试')

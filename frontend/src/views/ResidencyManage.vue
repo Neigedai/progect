@@ -6,23 +6,14 @@
 
     <el-card class="search-card">
       <el-form inline>
+        <el-form-item label="企业名称">
+          <el-input v-model="queryCompany" placeholder="输入企业名称" clearable style="width:180px" @keyup.enter="fetchList" />
+        </el-form-item>
         <el-form-item label="法人姓名">
           <el-input v-model="queryName" placeholder="输入法人姓名" clearable style="width:160px" @keyup.enter="fetchList" />
         </el-form-item>
-        <el-form-item label="行业类型">
-          <el-select v-model="queryIndustry" placeholder="全部" clearable style="width:180px" @change="fetchList">
-            <el-option value="信息技术" label="信息技术" />
-            <el-option value="生物医药" label="生物医药" />
-            <el-option value="智能制造" label="智能制造" />
-            <el-option value="新材料" label="新材料" />
-            <el-option value="新能源" label="新能源" />
-            <el-option value="现代服务" label="现代服务" />
-            <el-option value="文化创意" label="文化创意" />
-            <el-option value="其他" label="其他" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="queryStatus" placeholder="全部" clearable style="width:180px" @change="fetchList">
+          <el-select v-model="queryStatus" placeholder="全部" clearable style="width:140px" @change="fetchList">
             <el-option value="pending" label="待审批" />
             <el-option value="approved" label="已通过" />
             <el-option value="rejected" label="已驳回" />
@@ -30,7 +21,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="fetchList">搜索</el-button>
-          <el-button @click="queryName = ''; queryIndustry = ''; queryStatus = ''; fetchList()">重置</el-button>
+          <el-button @click="queryName = ''; queryCompany = ''; queryStatus = ''; fetchList()">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -38,11 +29,15 @@
     <el-card>
       <el-table v-loading="loading" :data="tableData" stripe empty-text="暂无入驻申请">
         <el-table-column prop="id" label="ID" width="60" />
+        <el-table-column prop="companyName" label="企业名称" min-width="150" />
         <el-table-column prop="legalPersonName" label="法人姓名" width="100" />
         <el-table-column prop="legalPersonPhone" label="法人电话" width="130" />
-        <el-table-column prop="area" label="面积需求" width="120" />
-        <el-table-column prop="industryType" label="行业类型" width="100" />
-        <el-table-column prop="expectedEntryDate" label="预计入驻" width="110" />
+        <el-table-column prop="location" label="入驻地点" width="120" />
+        <el-table-column label="企业类型" width="100">
+          <template #default="{ row }">
+            {{ ['','科技类','游戏动漫类','电商贸易类','咨询服务及其他'][row.enterpriseType] || '' }}
+          </template>
+        </el-table-column>
         <el-table-column label="状态" width="90">
           <template #default="{ row }">
             <el-tag :type="row.status === 'approved' ? 'success' : row.status === 'rejected' ? 'danger' : 'warning'" size="small">
@@ -73,23 +68,31 @@
       />
     </el-card>
 
-    <el-dialog v-model="dialogVisible" title="申请详情" width="650px">
+    <el-dialog v-model="dialogVisible" title="申请详情" width="680px">
       <el-descriptions :column="2" border>
+        <el-descriptions-item label="入驻地点">{{ detail.location }}</el-descriptions-item>
+        <el-descriptions-item label="企业名称">{{ detail.companyName }}</el-descriptions-item>
         <el-descriptions-item label="法人姓名">{{ detail.legalPersonName }}</el-descriptions-item>
         <el-descriptions-item label="法人电话">{{ detail.legalPersonPhone }}</el-descriptions-item>
-        <el-descriptions-item label="面积需求">{{ detail.area }}</el-descriptions-item>
-        <el-descriptions-item label="行业类型">{{ detail.industryType }}</el-descriptions-item>
-        <el-descriptions-item label="预计入驻时间">{{ detail.expectedEntryDate }}</el-descriptions-item>
-        <el-descriptions-item label="提交时间">{{ detail.createTime }}</el-descriptions-item>
-        <el-descriptions-item label="其他信息" :span="2">{{ detail.additionalInfo || '-' }}</el-descriptions-item>
-        <el-descriptions-item v-if="detail.reviewComment" label="审核意见" :span="2">
-          <span :style="{ color: detail.status === 'rejected' ? '#f56c6c' : '#67c23a', fontWeight: 500 }">{{ detail.reviewComment }}</span>
+        <el-descriptions-item label="企业类型">
+          {{ ['','科技类','游戏动漫类','电商贸易类','咨询服务及其他'][detail.enterpriseType] || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="身份证正面" :span="2">
+        <el-descriptions-item label="企业赛道">{{ detail.enterpriseTrack || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="应急联系人">{{ detail.emergencyContactName }}</el-descriptions-item>
+        <el-descriptions-item label="应急联系人电话">{{ detail.emergencyContactPhone }}</el-descriptions-item>
+        <el-descriptions-item label="提交时间">{{ detail.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="审核意见" :span="2">
+          <span :style="{ color: detail.status === 'rejected' ? '#f56c6c' : '#67c23a', fontWeight: 500 }">{{ detail.reviewComment || '-' }}</span>
+        </el-descriptions-item>
+        <el-descriptions-item label="营业执照" :span="2">
+          <el-image v-if="detail.businessLicenseUrl" :src="detail.businessLicenseUrl" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.businessLicenseUrl]" preview-teleported />
+          <span v-else>-</span>
+        </el-descriptions-item>
+        <el-descriptions-item label="法人身份证正面" :span="2">
           <el-image v-if="detail.legalPersonIdFront" :src="detail.legalPersonIdFront" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdFront]" preview-teleported />
           <span v-else>-</span>
         </el-descriptions-item>
-        <el-descriptions-item label="身份证反面" :span="2">
+        <el-descriptions-item label="法人身份证反面" :span="2">
           <el-image v-if="detail.legalPersonIdBack" :src="detail.legalPersonIdBack" style="max-width:300px;max-height:200px" fit="contain" :preview-src-list="[detail.legalPersonIdBack]" preview-teleported />
           <span v-else>-</span>
         </el-descriptions-item>
@@ -112,7 +115,7 @@ import { getResidencyApplications, getResidencyApplicationDetail, approveResiden
 
 const loading = ref(false)
 const queryName = ref('')
-const queryIndustry = ref('')
+const queryCompany = ref('')
 const queryStatus = ref('')
 const tableData = ref([])
 const total = ref(0)
@@ -125,7 +128,7 @@ const detail = ref({})
 const fetchList = async () => {
   loading.value = true
   try {
-    const res = await getResidencyApplications({ page: page.value, size: size.value, contactName: queryName.value || undefined, industryType: queryIndustry.value || undefined, status: queryStatus.value || undefined })
+    const res = await getResidencyApplications({ page: page.value, size: size.value, contactName: queryName.value || undefined, status: queryStatus.value || undefined })
     const data = res.data
     tableData.value = data.records || []
     total.value = data.total || 0
